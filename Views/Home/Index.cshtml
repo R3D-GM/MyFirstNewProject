@@ -1,300 +1,428 @@
 ﻿@model List<MyFirstNewProject.Models.Consignee>
 
 @{
-    ViewData["Title"] = "Consignees";
-    int currentPage = ViewBag.CurrentPage ?? 1;
-    int totalPages = ViewBag.TotalPages ?? 1;
-    int totalRecords = ViewBag.TotalRecords ?? 0;
-    int pageSize = ViewBag.PageSize ?? 10;
-    int startRecord = (currentPage - 1) * pageSize + 1;
-    int endRecord = Math.Min(currentPage * pageSize, totalRecords);
-    bool hasFilters = !string.IsNullOrEmpty(ViewBag.SearchTerm) ||
-                      !string.IsNullOrEmpty(ViewBag.Type) ||
-                      !string.IsNullOrEmpty(ViewBag.Status);
+    ViewData["Title"] = "Customer List";
+    var searchTerm = ViewBag.SearchTerm as string;
+    var sortBy = ViewBag.SortBy as string;
+    var sortDirection = ViewBag.SortDirection as string;
+    var currentPage = ViewBag.CurrentPage ?? 1;
+    var totalPages = ViewBag.TotalPages ?? 1;
+    var totalRecords = ViewBag.TotalRecords ?? 0;
+}
 
-    // Windowed pagination: show up to 5 page numbers around current page
-    int windowSize = 2;
-    int startPage = Math.Max(1, currentPage - windowSize);
-    int endPage = Math.Min(totalPages, currentPage + windowSize);
-    // Adjust window if at edges
-    if (endPage - startPage < windowSize * 2 && totalPages > windowSize * 2)
+<div class="container mt-4">
+    <h1 class="mb-4">
+        <i class="bi bi-people-fill text-primary"></i> Customer List
+        <span class="badge bg-primary rounded-pill fs-6 ms-2">@totalRecords records</span>
+    </h1>
+
+    @if (ViewBag.Error != null)
     {
-        if (currentPage <= totalPages / 2)
-        {
-            endPage = Math.Min(totalPages, startPage + windowSize * 2);
-        }
-        else
-        {
-            startPage = Math.Max(1, endPage - windowSize * 2);
-        }
-    }
-}
-
-<div class="text-center mb-4">
-    <h1 class="display-4">Consignees List</h1>
-    <p class="text-muted">Data fetched from API</p>
-</div>
-
-@if (ViewBag.Error != null)
-{
-    <div class="alert alert-danger">
-        @ViewBag.Error
-    </div>
-}
-
-@if (Model != null && Model.Any())
-{
-    <!-- Filter Form -->
-    <div class="card mb-4">
-        <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">
-                <i class="bi bi-funnel"></i> Filters
-            </h5>
-            @if (hasFilters)
-            {
-                <a href="@Url.Action("Index")" class="btn btn-sm btn-outline-secondary">
-                    &times; Clear Filters
-                </a>
-            }
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm">
+            <i class="bi bi-exclamation-triangle-fill"></i> @ViewBag.Error
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
+    }
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="text-center py-5" style="display: none;">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading customers...</p>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="card shadow-sm mb-4">
         <div class="card-body">
-            <form method="get" asp-action="Index" class="row g-3">
+            <form method="get" class="row g-3">
                 <div class="col-md-4">
-                    <label for="searchTerm" class="form-label">Search</label>
-                    <input type="text" class="form-control" id="searchTerm" name="searchTerm"
-                           value="@ViewBag.SearchTerm" placeholder="Search by name or code...">
+                    <label class="form-label fw-bold">
+                        <i class="bi bi-search"></i> Search
+                    </label>
+                    <div class="input-group">
+                        <input type="text" name="searchTerm" class="form-control" 
+                               placeholder="Search by name or code..." value="@searchTerm" />
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i>
+                        </button>
+                        @if (!string.IsNullOrEmpty(searchTerm))
+                        {
+                            <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                                <i class="bi bi-x-circle"></i>
+                            </a>
+                        }
+                    </div>
                 </div>
-                <div class="col-md-3">
-                    <label for="type" class="form-label">Type</label>
-                    <select class="form-select" id="type" name="type">
+
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">
+                        <i class="bi bi-filter"></i> Type
+                    </label>
+                    <select name="type" class="form-select" onchange="this.form.submit()">
                         <option value="">All Types</option>
-                        <option value="person" selected="@(ViewBag.Type == "person" ? "selected" : null)">Person</option>
-                        <option value="company" selected="@(ViewBag.Type == "company" ? "selected" : null)">Company</option>
+                        <option value="person" selected="@(ViewBag.Type == "person")">Person</option>
+                        <option value="company" selected="@(ViewBag.Type == "company")">Company</option>
                     </select>
                 </div>
-                <div class="col-md-3">
-                    <label for="status" class="form-label">Status</label>
-                    <select class="form-select" id="status" name="status">
-                        <option value="">All Statuses</option>
-                        <option value="active" selected="@(ViewBag.Status == "active" ? "selected" : null)">Active</option>
-                        <option value="inactive" selected="@(ViewBag.Status == "inactive" ? "selected" : null)">Inactive</option>
+
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">
+                        <i class="bi bi-filter"></i> Status
+                    </label>
+                    <select name="status" class="form-select" onchange="this.form.submit()">
+                        <option value="">All Status</option>
+                        <option value="active" selected="@(ViewBag.Status == "active")">Active</option>
+                        <option value="inactive" selected="@(ViewBag.Status == "inactive")">Inactive</option>
                     </select>
                 </div>
-                <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" class="btn btn-primary w-100">
-                        <i class="bi bi-search"></i> Apply
-                    </button>
+
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">
+                        <i class="bi bi-arrow-up-down"></i> Sort By
+                    </label>
+                    <select name="sortBy" class="form-select" onchange="this.form.submit()">
+                        <option value="">Default</option>
+                        <option value="id" selected="@(sortBy == "id")">ID</option>
+                        <option value="code" selected="@(sortBy == "code")">Code</option>
+                        <option value="name" selected="@(sortBy == "name")">Name</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label fw-bold">
+                        <i class="bi bi-arrow-down-up"></i> Order
+                    </label>
+                    <select name="sortDirection" class="form-select" onchange="this.form.submit()">
+                        <option value="asc" selected="@(sortDirection == "asc")">Ascending</option>
+                        <option value="desc" selected="@(sortDirection == "desc")">Descending</option>
+                    </select>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Results Info & Page Size Selector -->
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <div class="alert alert-info mb-0 py-2 flex-grow-1 me-3">
-            Showing <strong>@startRecord</strong> - <strong>@endRecord</strong> of <strong>@totalRecords</strong> records
-        </div>
-        <div class="d-flex align-items-center">
-            <label for="pageSizeSelector" class="form-label me-2 mb-0 text-nowrap">Per page:</label>
-            <select id="pageSizeSelector" class="form-select form-select-sm" style="width: auto;"
-                    onchange="window.location.href = '@Url.Action("Index", new {
-                        searchTerm = ViewBag.SearchTerm,
-                        type = ViewBag.Type,
-                        status = ViewBag.Status,
-                        sortBy = ViewBag.SortBy,
-                        sortDirection = ViewBag.SortDirection,
-                        page = 1,
-                        pageSize = "__PS__"
-                    })'.replace('__PS__', this.value);">
-                <option value="5" selected="@(pageSize == 5 ? "selected" : null)">5</option>
-                <option value="10" selected="@(pageSize == 10 ? "selected" : null)">10</option>
-                <option value="20" selected="@(pageSize == 20 ? "selected" : null)">20</option>
-                <option value="50" selected="@(pageSize == 50 ? "selected" : null)">50</option>
-                <option value="100" selected="@(pageSize == 100 ? "selected" : null)">100</option>
-            </select>
-        </div>
-    </div>
-
     <!-- Data Table -->
-    <div class="table-responsive">
-        <table class="table table-striped table-bordered table-hover">
-            <thead class="table-dark">
-                <tr>
-                    <th>
-                        <a href="@Url.Action("Index", new {
-                            searchTerm = ViewBag.SearchTerm,
-                            type = ViewBag.Type,
-                            status = ViewBag.Status,
-                            sortBy = "id",
-                            sortDirection = ViewBag.SortBy == "id" && ViewBag.SortDirection == "asc" ? "desc" : "asc",
-                            page = 1,
-                            pageSize = ViewBag.PageSize
-                        })" class="text-decoration-none text-white">
-                            ID
-                            @if (ViewBag.SortBy == "id")
+    <div class="card shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>#</th>
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>Type</th>
+                            <th>Business</th>
+                            <th>Status</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            var counter = (currentPage - 1) * 10 + 1;
+                            foreach (var item in Model)
                             {
-                                <span>@(ViewBag.SortDirection == "asc" ? " ▲" : " ▼")</span>
+                                <tr>
+                                    <td>@counter</td>
+                                    <td><span class="badge bg-secondary">@item.Code</span></td>
+                                    <td>
+                                        <strong>@item.FirstName</strong>
+                                        @if (!string.IsNullOrEmpty(item.SecondName))
+                                        {
+                                            <span>@item.SecondName</span>
+                                        }
+                                    </td>
+                                    <td>
+                                        <span class="badge @(item.IsPerson ? "bg-info" : "bg-warning")">
+                                            @(item.IsPerson ? "👤 Person" : "🏢 Company")
+                                        </span>
+                                    </td>
+                                    <td>@(item.BusinessType ?? "N/A")</td>
+                                    <td>
+                                        <span class="badge @(item.IsActive ? "bg-success" : "bg-danger")">
+                                            @(item.IsActive ? "✅ Active" : "❌ Inactive")
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="@Url.Action("Details", new { id = item.Id })" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="bi bi-eye"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                                counter++;
                             }
-                        </a>
-                    </th>
-                    <th>
-                        <a href="@Url.Action("Index", new {
-                            searchTerm = ViewBag.SearchTerm,
-                            type = ViewBag.Type,
-                            status = ViewBag.Status,
-                            sortBy = "code",
-                            sortDirection = ViewBag.SortBy == "code" && ViewBag.SortDirection == "asc" ? "desc" : "asc",
-                            page = 1,
-                            pageSize = ViewBag.PageSize
-                        })" class="text-decoration-none text-white">
-                            Code
-                            @if (ViewBag.SortBy == "code")
-                            {
-                                <span>@(ViewBag.SortDirection == "asc" ? " ▲" : " ▼")</span>
-                            }
-                        </a>
-                    </th>
-                    <th>
-                        <a href="@Url.Action("Index", new {
-                            searchTerm = ViewBag.SearchTerm,
-                            type = ViewBag.Type,
-                            status = ViewBag.Status,
-                            sortBy = "name",
-                            sortDirection = ViewBag.SortBy == "name" && ViewBag.SortDirection == "asc" ? "desc" : "asc",
-                            page = 1,
-                            pageSize = ViewBag.PageSize
-                        })" class="text-decoration-none text-white">
-                            Name
-                            @if (ViewBag.SortBy == "name")
-                            {
-                                <span>@(ViewBag.SortDirection == "asc" ? " ▲" : " ▼")</span>
-                            }
-                        </a>
-                    </th>
-                    <th>Type</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>@item.Id</td>
-                        <td>@item.Code</td>
-                        <td>@item.FirstName @item.SecondName @item.ThirdName</td>
-                        <td>
-                            <span class="badge @(item.IsPerson ? "bg-primary" : "bg-secondary")">
-                                @(item.IsPerson ? "Person" : "Company")
-                            </span>
-                        </td>
-                        <td>
-                            <span class="badge @(item.IsActive ? "bg-success" : "bg-danger")">
-                                @(item.IsActive ? "Active" : "Inactive")
-                            </span>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="7" class="text-center py-5">
+                                    <i class="bi bi-inbox display-1 d-block text-muted"></i>
+                                    <h4 class="text-muted">No records found</h4>
+                                    <p class="text-muted">Try adjusting your search or filters</p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
-    <!-- Windowed Pagination -->
+    <!-- Pagination -->
     @if (totalPages > 1)
     {
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
-                <!-- First -->
-                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                    <a class="page-link" href="@Url.Action("Index", new {
-                        searchTerm = ViewBag.SearchTerm,
-                        type = ViewBag.Type,
-                        status = ViewBag.Status,
-                        sortBy = ViewBag.SortBy,
-                        sortDirection = ViewBag.SortDirection,
-                        page = 1,
-                        pageSize = ViewBag.PageSize
-                    })" aria-label="First">
-                        <span aria-hidden="true">&laquo;&laquo;</span>
-                    </a>
-                </li>
-                <!-- Previous -->
-                <li class="page-item @(currentPage == 1 ? "disabled" : "")">
-                    <a class="page-link" href="@Url.Action("Index", new {
-                        searchTerm = ViewBag.SearchTerm,
-                        type = ViewBag.Type,
-                        status = ViewBag.Status,
-                        sortBy = ViewBag.SortBy,
-                        sortDirection = ViewBag.SortDirection,
-                        page = currentPage - 1,
-                        pageSize = ViewBag.PageSize
-                    })" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                    </a>
-                </li>
+        <div class="mt-4">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                        <a class="page-link" 
+                           href="@Url.Action("Index", new { 
+                               searchTerm = searchTerm, 
+                               sortBy = sortBy, 
+                               sortDirection = sortDirection, 
+                               type = ViewBag.Type,
+                               status = ViewBag.Status,
+                               page = currentPage - 1 
+                           })">
+                            <i class="bi bi-chevron-left"></i> Previous
+                        </a>
+                    </li>
 
-                <!-- Ellipsis + Page Numbers -->
-                @if (startPage > 1)
-                {
-                    <li class="page-item disabled">
-                        <span class="page-link">...</span>
-                    </li>
-                }
-                @for (int i = startPage; i <= endPage; i++)
-                {
-                    <li class="page-item @(i == currentPage ? "active" : "")">
-                        <a class="page-link" href="@Url.Action("Index", new {
-                            searchTerm = ViewBag.SearchTerm,
-                            type = ViewBag.Type,
-                            status = ViewBag.Status,
-                            sortBy = ViewBag.SortBy,
-                            sortDirection = ViewBag.SortDirection,
-                            page = i,
-                            pageSize = ViewBag.PageSize
-                        })">@i</a>
-                    </li>
-                }
-                @if (endPage < totalPages)
-                {
-                    <li class="page-item disabled">
-                        <span class="page-link">...</span>
-                    </li>
-                }
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        <li class="page-item @(i == currentPage ? "active" : "")">
+                            <a class="page-link" 
+                               href="@Url.Action("Index", new { 
+                                   searchTerm = searchTerm, 
+                                   sortBy = sortBy, 
+                                   sortDirection = sortDirection,
+                                   type = ViewBag.Type,
+                                   status = ViewBag.Status,
+                                   page = i 
+                               })">@i</a>
+                        </li>
+                    }
 
-                <!-- Next -->
-                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                    <a class="page-link" href="@Url.Action("Index", new {
-                        searchTerm = ViewBag.SearchTerm,
-                        type = ViewBag.Type,
-                        status = ViewBag.Status,
-                        sortBy = ViewBag.SortBy,
-                        sortDirection = ViewBag.SortDirection,
-                        page = currentPage + 1,
-                        pageSize = ViewBag.PageSize
-                    })" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                    </a>
-                </li>
-                <!-- Last -->
-                <li class="page-item @(currentPage == totalPages ? "disabled" : "")">
-                    <a class="page-link" href="@Url.Action("Index", new {
-                        searchTerm = ViewBag.SearchTerm,
-                        type = ViewBag.Type,
-                        status = ViewBag.Status,
-                        sortBy = ViewBag.SortBy,
-                        sortDirection = ViewBag.SortDirection,
-                        page = totalPages,
-                        pageSize = ViewBag.PageSize
-                    })" aria-label="Last">
-                        <span aria-hidden="true">&raquo;&raquo;</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
+                    <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                        <a class="page-link" 
+                           href="@Url.Action("Index", new { 
+                               searchTerm = searchTerm, 
+                               sortBy = sortBy, 
+                               sortDirection = sortDirection,
+                               type = ViewBag.Type,
+                               status = ViewBag.Status,
+                               page = currentPage + 1 
+                           })">
+                            Next <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="text-center text-muted">
+                Showing page @currentPage of @totalPages
+                (@((currentPage - 1) * 10 + 1) - @Math.Min(currentPage * 10, totalRecords) of @totalRecords records)
+            </div>
+        </div>
     }
-}
-else if (ViewBag.Error == null)
-{
-    <div class="alert alert-warning">
-        <i class="bi bi-exclamation-triangle"></i> No data found. Please check the API connection.
+
+    <!-- Stats Cards with Cerulean Theme -->
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="card stats-card bg-primary text-dark shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title"><i class="bi bi-people"></i> Total</h5>
+                    <h2>@totalRecords</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stats-card bg-success text-white shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title"><i class="bi bi-check-circle"></i> Active</h5>
+                    <h2>@(Model?.Count(c => c.IsActive) ?? 0)</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stats-card bg-warning text-dark shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title"><i class="bi bi-building"></i> Companies</h5>
+                    <h2>@(Model?.Count(c => !c.IsPerson) ?? 0)</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stats-card bg-info text-dark shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title"><i class="bi bi-person"></i> Persons</h5>
+                    <h2>@(Model?.Count(c => c.IsPerson) ?? 0)</h2>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            border-radius: 10px;
+            border: none;
+        }
+        .table th {
+            font-weight: 600;
+        }
+        .pagination .page-link {
+            border-radius: 5px;
+            margin: 0 2px;
+        }
+        .badge {
+            font-size: 0.85em;
+            padding: 5px 10px;
+        }
+        .stats-card {
+            transition: transform 0.2s;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(28, 43, 72, 0.2);
+        }
+        
+        /* Cerulean Theme Colors */
+        .bg-primary {
+            background: linear-gradient(135deg, #8EB1D1, #A7C7E7) !important;
+            color: #1C2B48 !important;
+        }
+        .bg-success {
+            background: linear-gradient(135deg, #4A7C5E, #6B9E7A) !important;
+        }
+        .bg-warning {
+            background: linear-gradient(135deg, #C4D8E5, #E8ECEF) !important;
+            color: #1C2B48 !important;
+        }
+        .bg-info {
+            background: linear-gradient(135deg, #A7C7E7, #8EB1D1) !important;
+            color: #1C2B48 !important;
+        }
+        
+        /* Badges */
+        .badge.bg-secondary {
+            background: #C4D8E5 !important;
+            color: #1C2B48 !important;
+        }
+        .badge.bg-success {
+            background: #5D8A6E !important;
+            color: white !important;
+        }
+        .badge.bg-danger {
+            background: #C47B7A !important;
+            color: white !important;
+        }
+        .badge.bg-warning {
+            background: #C4D8E5 !important;
+            color: #1C2B48 !important;
+        }
+        .badge.bg-info {
+            background: #A7C7E7 !important;
+            color: #1C2B48 !important;
+        }
+        
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #8EB1D1, #A7C7E7);
+            border: none;
+            color: #1C2B48;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #A7C7E7, #8EB1D1);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(28, 43, 72, 0.3);
+            color: #1C2B48;
+        }
+        .btn-outline-primary {
+            color: #8EB1D1;
+            border-color: #8EB1D1;
+        }
+        .btn-outline-primary:hover {
+            background: #8EB1D1;
+            color: #1C2B48;
+            border-color: #8EB1D1;
+        }
+        .btn-outline-secondary {
+            color: #C4D8E5;
+            border-color: #C4D8E5;
+        }
+        .btn-outline-secondary:hover {
+            background: #C4D8E5;
+            color: #1C2B48;
+            border-color: #C4D8E5;
+        }
+        
+        /* Table */
+        .table-dark {
+            background: #1C2B48 !important;
+        }
+        .table-striped > tbody > tr:nth-of-type(odd) {
+            background-color: rgba(142, 177, 209, 0.08);
+        }
+        .table-hover > tbody > tr:hover {
+            background-color: rgba(167, 199, 231, 0.15);
+        }
+        
+        /* Pagination */
+        .pagination .page-link {
+            color: #1C2B48;
+            border-color: #C4D8E5;
+            border-radius: 5px;
+            margin: 0 2px;
+        }
+        .pagination .page-link:hover {
+            background: #A7C7E7;
+            border-color: #8EB1D1;
+        }
+        .pagination .active .page-link {
+            background: #8EB1D1;
+            border-color: #8EB1D1;
+            color: #1C2B48;
+        }
+        
+        /* Text Colors */
+        .text-primary {
+            color: #8EB1D1 !important;
+        }
+        .text-muted {
+            color: #1C2B48 !important;
+            opacity: 0.6;
+        }
+        
+        /* Spinner */
+        .spinner-border.text-primary {
+            color: #8EB1D1 !important;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Show loading spinner when any action starts
+        document.querySelectorAll('a, button, select').forEach(el => {
+            el.addEventListener('click', function() {
+                if (this.tagName !== 'A' || this.href) {
+                    document.getElementById('loadingSpinner').style.display = 'block';
+                }
+            });
+        });
+
+        // Auto-hide flash messages after 5 seconds
+        setTimeout(function() {
+            const alerts = document.querySelectorAll('.alert.alert-dismissible');
+            alerts.forEach(alert => {
+                alert.style.transition = 'opacity 1s';
+                alert.style.opacity = '0';
+                setTimeout(() => alert.remove(), 1000);
+            });
+        }, 5000);
+    </script>
 }

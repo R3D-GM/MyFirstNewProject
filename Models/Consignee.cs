@@ -9,7 +9,9 @@ public class Consignee
     public string? ThirdName { get; set; }
     public bool IsPerson { get; set; }
     public bool IsActive { get; set; }
-
-    // IMPORTANT: must be nullable
-    public DateTime? StartDate { get; set; }
+    public string? BusinessType { get; set; }
+    public string? Tin { get; set; }
+    public string? Gender { get; set; }
+    public DateTime CreatedOn { get; set; }
+    public DateTime LastModified { get; set; }
 }

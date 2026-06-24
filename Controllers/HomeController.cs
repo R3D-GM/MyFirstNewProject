@@ -75,7 +75,7 @@ public class HomeController : Controller
             }
 
             // -------------------------
-            // SORT
+            // SORTING
             // -------------------------
             sortDirection = sortDirection ?? "asc";
 
@@ -138,6 +138,32 @@ public class HomeController : Controller
             _logger.LogError(ex, "Error in Index");
             ViewBag.Error = "Unable to load data. Please try again.";
             return View(new List<Consignee>());
+        }
+    }
+
+    // ============================================================
+    // ✅ ADD THIS DETAILS METHOD (place it here)
+    // ============================================================
+    public async Task<IActionResult> Details(int id)
+    {
+        try
+        {
+            var allData = await _consigneeService.GetConsigneesAsync();
+            var customer = allData.FirstOrDefault(c => c.Id == id);
+            
+            if (customer == null)
+            {
+                ViewBag.Error = "Customer not found.";
+                return View();
+            }
+            
+            return View(customer);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error fetching details for ID: {id}");
+            ViewBag.Error = "Unable to load customer details.";
+            return View();
         }
     }
 
