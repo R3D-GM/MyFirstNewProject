@@ -1,0 +1,66 @@
+┌─────────────────────────────────────────────────────────────────────┐
+│                    EXECUTIVE DASHBOARD                             │
+│                                                                     │
+│  NAVIGATION:                                                        │
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐                │
+│  │  Dashboard  │  │Customer List│  │   Privacy   │                │
+│  └─────────────┘  └─────────────┘  └─────────────┘                │
+│                                                                     │
+│  SECTION 1: KPI CARDS (4 cards in a row)                           │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐          │
+│  │  TOTAL   │  │  ACTIVE  │  │COMPANIES │  │ PERSONS  │          │
+│  │  👥 5,979│  │ ✅ 4,200 │  │ 🏢 3,500 │  │ 👤 2,479 │          │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘          │
+│                                                                     │
+│  SECTION 2: CHARTS (2 charts side by side)                         │
+│  ┌─────────────────────┐  ┌─────────────────────┐                 │
+│  │   PIE CHART         │  │   DOUGHNUT CHART    │                 │
+│  │  Customer Type      │  │  Status             │                 │
+│  │  Distribution       │  │  Distribution       │                 │
+│  └─────────────────────┘  └─────────────────────┘                 │
+│                                                                     │
+│  SECTION 3: ANALYTICS (Full width)                                 │
+│  ┌─────────────────────────────────────────────────────────────────┐│
+│  │   BAR CHART - Customer Analytics                              ││
+│  │   Shows comparison of all metrics                             ││
+│  └─────────────────────────────────────────────────────────────────┘│
+│                                                                     │
+│  SECTION 4: QUICK STATS (Full width)                               │
+│  ┌─────────────────────────────────────────────────────────────────┐│
+│  │   Summary: Total: 5,979 | Active Rate: 70% | Companies: 3,500││
+│  └─────────────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────────────┘
+
+KEY METRICS IDENTIFIED:
+1. Total Customers = Count all records
+2. Active Customers = Count where isActive = true
+3. Inactive Customers = Count where isActive = false
+4. Companies = Count where isPerson = false
+5. Persons = Count where isPerson = true
+6. Active Rate = (Active / Total) * 100
+7. Business Type Distribution = Group by BusinessType
+
+API DATA STRUCTURE:
+- id: Unique customer identifier
+- code: Customer code
+- firstName, secondName, thirdName: Name fields
+- isPerson: True = Person, False = Company
+- isActive: True = Active, False = Inactive
+- businessType: Business category
+- gender: Gender
+- createdOn: Creation date
+- lastModified: Last update date
+
+COLOR SCHEME:
+- Primary: #8EB1D1 (Cool Cerulean)
+- Secondary: #A7C7E7 (Baby Blue Eyes)
+- Dark: #1C2B48 (Midnight Blue)
+- Background: #E8ECEF (Platinum)
+- Accent: #C4D8E5 (Light Blue Grey)
+
+DASHBOARD SECTIONS:
+1. KPI Cards - 4 cards showing key metrics
+2. Pie Chart - Customer type distribution (Companies vs Persons)
+3. Doughnut Chart - Status distribution (Active vs Inactive)
+4. Bar Chart - Analytics comparison
+5. Quick Stats - Summary statistics
