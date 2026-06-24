@@ -18,10 +18,10 @@ A fully functional ASP.NET Core MVC web application that displays customer data 
 ## 📸 Screenshots
 
 ### Customer List Page
-![Customer List](screenshots/customer-list.png)
+![Customer List](Desktop/customer-list.png)
 
 ### Customer Details Page
-![Customer Details](screenshots/customer-details.png)
+![Customer Details](Desktop/customer-details.png)
 
 ---
 
