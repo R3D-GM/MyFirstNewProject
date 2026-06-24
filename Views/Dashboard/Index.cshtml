@@ -1,0 +1,499 @@
+@model MyFirstNewProject.ViewModels.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Executive Dashboard";
+}
+
+<div class="container-fluid mt-4">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-5">
+                <i class="bi bi-speedometer2 text-primary"></i> Executive Dashboard
+            </h1>
+            <p class="text-muted">Real-time customer insights and analytics</p>
+        </div>
+        <div>
+            <span class="badge bg-success rounded-pill fs-6 p-3">
+                <i class="bi bi-check-circle"></i> Data Updated: @DateTime.Now.ToString("hh:mm tt")
+            </span>
+        </div>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show shadow-sm">
+            <i class="bi bi-exclamation-triangle-fill"></i> @ViewBag.Error
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- LOADING SPINNER -->
+    <div id="loadingSpinner" class="text-center py-5" style="display: none;">
+        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+        <p class="mt-2">Loading dashboard data...</p>
+    </div>
+
+    <!-- KPI CARDS ROW -->
+    <div class="row g-4 mb-4">
+        <!-- Total Customers -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card stats-card bg-primary text-white shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-white-50">Total Customers</h6>
+                            <h2 class="mb-0">@Model.TotalCustomers</h2>
+                        </div>
+                        <div class="display-4 opacity-50">
+                            <i class="bi bi-people"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small><i class="bi bi-arrow-up"></i> 100% of data</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Customers -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card stats-card bg-success text-white shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-white-50">Active Customers</h6>
+                            <h2 class="mb-0">@Model.ActiveCustomers</h2>
+                        </div>
+                        <div class="display-4 opacity-50">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small>
+                            <i class="bi bi-arrow-up"></i> 
+                            @(Model.TotalCustomers > 0 ? Math.Round((double)Model.ActiveCustomers / Model.TotalCustomers * 100) : 0)% of total
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Companies -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card stats-card bg-warning text-dark shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-dark-50">Companies</h6>
+                            <h2 class="mb-0">@Model.TotalCompanies</h2>
+                        </div>
+                        <div class="display-4 opacity-50">
+                            <i class="bi bi-building"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small>
+                            <i class="bi bi-arrow-right"></i> 
+                            @(Model.TotalCustomers > 0 ? Math.Round((double)Model.TotalCompanies / Model.TotalCustomers * 100) : 0)% of total
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Persons -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card stats-card bg-info text-white shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title text-white-50">Persons</h6>
+                            <h2 class="mb-0">@Model.TotalPersons</h2>
+                        </div>
+                        <div class="display-4 opacity-50">
+                            <i class="bi bi-person"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <small>
+                            <i class="bi bi-arrow-right"></i> 
+                            @(Model.TotalCustomers > 0 ? Math.Round((double)Model.TotalPersons / Model.TotalCustomers * 100) : 0)% of total
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHARTS ROW -->
+    <div class="row g-4 mb-4">
+        <!-- Pie Chart -->
+        <div class="col-xl-6 col-md-12">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-pie-chart text-primary"></i> Customer Type Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <div style="height: 300px;">
+                        <canvas id="customerTypeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Doughnut Chart -->
+        <div class="col-xl-6 col-md-12">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-circle text-success"></i> Status Distribution</h5>
+                </div>
+                <div class="card-body">
+                    <div style="height: 300px;">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- BAR CHART - Analytics -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-bar-chart text-primary"></i> Customer Analytics Overview</h5>
+                </div>
+                <div class="card-body">
+                    <div style="height: 300px;">
+                        <canvas id="analyticsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOMER ANALYTICS MODULE -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-graph-up text-primary"></i> Customer Analytics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <!-- Business Type Distribution -->
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-3">
+                                <i class="bi bi-tags"></i> Business Type Distribution
+                            </h6>
+                            @{
+                                var businessGroups = Model.Customers
+                                    .GroupBy(c => c.BusinessType ?? "Not Specified")
+                                    .Select(g => new { Type = g.Key, Count = g.Count() })
+                                    .OrderByDescending(g => g.Count)
+                                    .Take(5)
+                                    .ToList();
+                            }
+                            @if (businessGroups.Any())
+                            {
+                                <div class="list-group">
+                                    @foreach (var group in businessGroups)
+                                    {
+                                        var percentage = Model.TotalCustomers > 0 
+                                            ? Math.Round((double)group.Count / Model.TotalCustomers * 100) 
+                                            : 0;
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <span>@group.Type</span>
+                                            <span>
+                                                <span class="badge bg-primary rounded-pill me-2">@group.Count</span>
+                                                <span class="badge bg-secondary rounded-pill">@percentage%</span>
+                                            </span>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <p class="text-muted">No business type data available</p>
+                            }
+                        </div>
+
+                        <!-- Quick Analytics Stats -->
+                        <div class="col-md-6">
+                            <h6 class="text-muted mb-3">
+                                <i class="bi bi-lightning"></i> Key Insights
+                            </h6>
+                            <div class="row g-3">
+                                <div class="col-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h6 class="text-muted">Most Common Type</h6>
+                                            @{
+                                                var mostCommon = businessGroups.FirstOrDefault();
+                                            }
+                                            <h4>@(mostCommon?.Type ?? "N/A")</h4>
+                                            <small class="text-muted">@(mostCommon?.Count ?? 0) customers</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h6 class="text-muted">Active Rate</h6>
+                                            @{
+                                                var activeRate = Model.TotalCustomers > 0 
+                                                    ? Math.Round((double)Model.ActiveCustomers / Model.TotalCustomers * 100) 
+                                                    : 0;
+                                            }
+                                            <h4>@activeRate%</h4>
+                                            <small class="text-muted">@Model.ActiveCustomers active customers</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h6 class="text-muted">Company Ratio</h6>
+                                            @{
+                                                var companyRatio = Model.TotalCustomers > 0 
+                                                    ? Math.Round((double)Model.TotalCompanies / Model.TotalCustomers * 100) 
+                                                    : 0;
+                                            }
+                                            <h4>@companyRatio%</h4>
+                                            <small class="text-muted">@Model.TotalCompanies companies</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="card bg-light">
+                                        <div class="card-body text-center">
+                                            <h6 class="text-muted">Person Ratio</h6>
+                                            @{
+                                                var personRatio = Model.TotalCustomers > 0 
+                                                    ? Math.Round((double)Model.TotalPersons / Model.TotalCustomers * 100) 
+                                                    : 0;
+                                            }
+                                            <h4>@personRatio%</h4>
+                                            <small class="text-muted">@Model.TotalPersons persons</small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUICK STATISTICS -->
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-clipboard-data text-primary"></i> Quick Statistics</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <h6 class="text-muted">Total Customers</h6>
+                            <h3>@Model.TotalCustomers</h3>
+                        </div>
+                        <div class="col-md-3">
+                            <h6 class="text-muted">Active Rate</h6>
+                            <h3>@(Model.TotalCustomers > 0 ? Math.Round((double)Model.ActiveCustomers / Model.TotalCustomers * 100) : 0)%</h3>
+                        </div>
+                        <div class="col-md-3">
+                            <h6 class="text-muted">Companies</h6>
+                            <h3>@Model.TotalCompanies</h3>
+                        </div>
+                        <div class="col-md-3">
+                            <h6 class="text-muted">Persons</h6>
+                            <h3>@Model.TotalPersons</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // ========================================
+        // LOADING SPINNER
+        // ========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('loadingSpinner').style.display = 'none';
+        });
+
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function() {
+                if (this.href && !this.href.includes('javascript')) {
+                    document.getElementById('loadingSpinner').style.display = 'block';
+                }
+            });
+        });
+
+        // ========================================
+        // 1. PIE CHART - Customer Type
+        // ========================================
+        var ctx1 = document.getElementById('customerTypeChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'pie',
+            data: {
+                labels: ['Companies', 'Persons'],
+                datasets: [{
+                    data: [@Model.TotalCompanies, @Model.TotalPersons],
+                    backgroundColor: ['#FFB74D', '#64B5F6'],
+                    borderColor: ['#F57C00', '#1976D2'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // ========================================
+        // 2. DOUGHNUT CHART - Status
+        // ========================================
+        var ctx2 = document.getElementById('statusChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Active', 'Inactive'],
+                datasets: [{
+                    data: [@Model.ActiveCustomers, @Model.InactiveCustomers],
+                    backgroundColor: ['#66BB6A', '#EF5350'],
+                    borderColor: ['#2E7D32', '#C62828'],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom'
+                    }
+                }
+            }
+        });
+
+        // ========================================
+        // 3. BAR CHART - Analytics
+        // ========================================
+        var ctx3 = document.getElementById('analyticsChart').getContext('2d');
+        new Chart(ctx3, {
+            type: 'bar',
+            data: {
+                labels: ['Total Customers', 'Active', 'Inactive', 'Companies', 'Persons'],
+                datasets: [{
+                    label: 'Customer Analytics',
+                    data: [
+                        @Model.TotalCustomers,
+                        @Model.ActiveCustomers,
+                        @Model.InactiveCustomers,
+                        @Model.TotalCompanies,
+                        @Model.TotalPersons
+                    ],
+                    backgroundColor: [
+                        '#4FC3F7',
+                        '#66BB6A',
+                        '#EF5350',
+                        '#FFB74D',
+                        '#64B5F6'
+                    ],
+                    borderColor: [
+                        '#0288D1',
+                        '#2E7D32',
+                        '#C62828',
+                        '#F57C00',
+                        '#1976D2'
+                    ],
+                    borderWidth: 2,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .stats-card {
+            border-radius: 15px;
+            border: none;
+            transition: transform 0.2s;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .card {
+            border-radius: 15px;
+            border: none;
+        }
+        .card-header {
+            border-radius: 15px 15px 0 0;
+        }
+        .bg-primary {
+            background: linear-gradient(135deg, #8EB1D1, #A7C7E7) !important;
+            color: #1C2B48 !important;
+        }
+        .bg-success {
+            background: linear-gradient(135deg, #4A7C5E, #6B9E7A) !important;
+        }
+        .bg-warning {
+            background: linear-gradient(135deg, #C4D8E5, #E8ECEF) !important;
+            color: #1C2B48 !important;
+        }
+        .bg-info {
+            background: linear-gradient(135deg, #A7C7E7, #8EB1D1) !important;
+            color: #1C2B48 !important;
+        }
+        .text-white-50 {
+            color: rgba(28, 43, 72, 0.6) !important;
+        }
+        .text-dark-50 {
+            color: rgba(28, 43, 72, 0.6) !important;
+        }
+        .list-group-item {
+            border: none;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .list-group-item:last-child {
+            border-bottom: none;
+        }
+        .bg-light {
+            background-color: #f8f9fa !important;
+        }
+    </style>
+}
