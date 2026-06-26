@@ -10,11 +10,20 @@
     var totalRecords = ViewBag.TotalRecords ?? 0;
 }
 
-<div class="container mt-4">
-    <h1 class="mb-4">
-        <i class="bi bi-people-fill text-primary"></i> Customer List
-        <span class="badge bg-primary rounded-pill fs-6 ms-2">@totalRecords records</span>
-    </h1>
+<div class="container-fluid px-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-6 fw-bold">
+                <i class="bi bi-people text-primary"></i> Customers
+            </h1>
+            <p class="text-muted">Manage and view all customer records</p>
+        </div>
+        <div>
+            <span class="badge bg-primary rounded-pill fs-6 p-3">
+                <i class="bi bi-database"></i> @totalRecords records
+            </span>
+        </div>
+    </div>
 
     @if (ViewBag.Error != null)
     {
@@ -29,17 +38,18 @@
         <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
             <span class="visually-hidden">Loading...</span>
         </div>
-        <p class="mt-2">Loading customers...</p>
+        <p class="mt-2 text-muted">Loading customers...</p>
     </div>
 
-    <!-- Search and Filter Section -->
-    <div class="card shadow-sm mb-4">
+    <!-- ============================================ -->
+    <!-- SEARCH, FILTER, SORT SECTION               -->
+    <!-- ============================================ -->
+    <div class="card border-0 mb-4">
         <div class="card-body">
             <form method="get" class="row g-3">
-                <div class="col-md-4">
-                    <label class="form-label fw-bold">
-                        <i class="bi bi-search"></i> Search
-                    </label>
+                <!-- Search -->
+                <div class="col-md-3">
+                    <label class="form-label"><i class="bi bi-search"></i> Search</label>
                     <div class="input-group">
                         <input type="text" name="searchTerm" class="form-control" 
                                placeholder="Search by name or code..." value="@searchTerm" />
@@ -55,10 +65,9 @@
                     </div>
                 </div>
 
+                <!-- Filter by Type -->
                 <div class="col-md-2">
-                    <label class="form-label fw-bold">
-                        <i class="bi bi-filter"></i> Type
-                    </label>
+                    <label class="form-label"><i class="bi bi-filter"></i> Type</label>
                     <select name="type" class="form-select" onchange="this.form.submit()">
                         <option value="">All Types</option>
                         <option value="person" selected="@(ViewBag.Type == "person")">Person</option>
@@ -66,10 +75,9 @@
                     </select>
                 </div>
 
+                <!-- Filter by Status -->
                 <div class="col-md-2">
-                    <label class="form-label fw-bold">
-                        <i class="bi bi-filter"></i> Status
-                    </label>
+                    <label class="form-label"><i class="bi bi-filter"></i> Status</label>
                     <select name="status" class="form-select" onchange="this.form.submit()">
                         <option value="">All Status</option>
                         <option value="active" selected="@(ViewBag.Status == "active")">Active</option>
@@ -77,10 +85,9 @@
                     </select>
                 </div>
 
+                <!-- Sort By -->
                 <div class="col-md-2">
-                    <label class="form-label fw-bold">
-                        <i class="bi bi-arrow-up-down"></i> Sort By
-                    </label>
+                    <label class="form-label"><i class="bi bi-arrow-up-down"></i> Sort By</label>
                     <select name="sortBy" class="form-select" onchange="this.form.submit()">
                         <option value="">Default</option>
                         <option value="id" selected="@(sortBy == "id")">ID</option>
@@ -89,25 +96,33 @@
                     </select>
                 </div>
 
+                <!-- Order -->
                 <div class="col-md-2">
-                    <label class="form-label fw-bold">
-                        <i class="bi bi-arrow-down-up"></i> Order
-                    </label>
+                    <label class="form-label"><i class="bi bi-arrow-down-up"></i> Order</label>
                     <select name="sortDirection" class="form-select" onchange="this.form.submit()">
                         <option value="asc" selected="@(sortDirection == "asc")">Ascending</option>
                         <option value="desc" selected="@(sortDirection == "desc")">Descending</option>
                     </select>
                 </div>
+
+                <!-- Clear Button -->
+                <div class="col-md-1 d-flex align-items-end">
+                    <a href="@Url.Action("Index")" class="btn btn-secondary w-100">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </a>
+                </div>
             </form>
         </div>
     </div>
 
-    <!-- Data Table -->
-    <div class="card shadow-sm">
+    <!-- ============================================ -->
+    <!-- DATA TABLE                                  -->
+    <!-- ============================================ -->
+    <div class="card border-0">
         <div class="card-body p-0">
             <div class="table-responsive">
-                <table class="table table-striped table-hover mb-0">
-                    <thead class="table-dark">
+                <table class="table table-hover mb-0">
+                    <thead>
                         <tr>
                             <th>#</th>
                             <th>Code</th>
@@ -142,7 +157,7 @@
                                     <td>@(item.BusinessType ?? "N/A")</td>
                                     <td>
                                         <span class="badge @(item.IsActive ? "bg-success" : "bg-danger")">
-                                            @(item.IsActive ? "✅ Active" : "❌ Inactive")
+                                            @(item.IsActive ? "Active" : "Inactive")
                                         </span>
                                     </td>
                                     <td class="text-center">
@@ -171,7 +186,9 @@
         </div>
     </div>
 
-    <!-- Pagination -->
+    <!-- ============================================ -->
+    <!-- PAGINATION                                  -->
+    <!-- ============================================ -->
     @if (totalPages > 1)
     {
         <div class="mt-4">
@@ -228,37 +245,39 @@
         </div>
     }
 
-    <!-- Stats Cards with Cerulean Theme -->
-    <div class="row mt-4">
+    <!-- ============================================ -->
+    <!-- STATS CARDS                                 -->
+    <!-- ============================================ -->
+    <div class="row g-4 mt-2">
         <div class="col-md-3">
-            <div class="card stats-card bg-primary text-dark shadow-sm">
+            <div class="card stats-card border-0">
                 <div class="card-body text-center">
-                    <h5 class="card-title"><i class="bi bi-people"></i> Total</h5>
-                    <h2>@totalRecords</h2>
+                    <h6 class="text-muted">Total</h6>
+                    <h2 class="fw-bold">@totalRecords</h2>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card stats-card bg-success text-white shadow-sm">
+            <div class="card stats-card border-0">
                 <div class="card-body text-center">
-                    <h5 class="card-title"><i class="bi bi-check-circle"></i> Active</h5>
-                    <h2>@(Model?.Count(c => c.IsActive) ?? 0)</h2>
+                    <h6 class="text-muted">Active</h6>
+                    <h2 class="fw-bold text-success">@(Model?.Count(c => c.IsActive) ?? 0)</h2>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card stats-card bg-warning text-dark shadow-sm">
+            <div class="card stats-card border-0">
                 <div class="card-body text-center">
-                    <h5 class="card-title"><i class="bi bi-building"></i> Companies</h5>
-                    <h2>@(Model?.Count(c => !c.IsPerson) ?? 0)</h2>
+                    <h6 class="text-muted">Companies</h6>
+                    <h2 class="fw-bold text-warning">@(Model?.Count(c => !c.IsPerson) ?? 0)</h2>
                 </div>
             </div>
         </div>
         <div class="col-md-3">
-            <div class="card stats-card bg-info text-dark shadow-sm">
+            <div class="card stats-card border-0">
                 <div class="card-body text-center">
-                    <h5 class="card-title"><i class="bi bi-person"></i> Persons</h5>
-                    <h2>@(Model?.Count(c => c.IsPerson) ?? 0)</h2>
+                    <h6 class="text-muted">Persons</h6>
+                    <h2 class="fw-bold text-info">@(Model?.Count(c => c.IsPerson) ?? 0)</h2>
                 </div>
             </div>
         </div>
@@ -267,139 +286,30 @@
 
 @section Styles {
     <style>
-        .card {
-            border-radius: 10px;
-            border: none;
-        }
-        .table th {
-            font-weight: 600;
-        }
-        .pagination .page-link {
-            border-radius: 5px;
-            margin: 0 2px;
-        }
-        .badge {
-            font-size: 0.85em;
-            padding: 5px 10px;
-        }
         .stats-card {
-            transition: transform 0.2s;
+            background: linear-gradient(145deg, #111827, #0d1420) !important;
+            border: 1px solid rgba(59, 130, 246, 0.15) !important;
+            border-radius: 16px !important;
+            transition: all 0.3s ease;
         }
         .stats-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(28, 43, 72, 0.2);
-        }
-        
-        /* Cerulean Theme Colors */
-        .bg-primary {
-            background: linear-gradient(135deg, #8EB1D1, #A7C7E7) !important;
-            color: #1C2B48 !important;
-        }
-        .bg-success {
-            background: linear-gradient(135deg, #4A7C5E, #6B9E7A) !important;
-        }
-        .bg-warning {
-            background: linear-gradient(135deg, #C4D8E5, #E8ECEF) !important;
-            color: #1C2B48 !important;
-        }
-        .bg-info {
-            background: linear-gradient(135deg, #A7C7E7, #8EB1D1) !important;
-            color: #1C2B48 !important;
-        }
-        
-        /* Badges */
-        .badge.bg-secondary {
-            background: #C4D8E5 !important;
-            color: #1C2B48 !important;
-        }
-        .badge.bg-success {
-            background: #5D8A6E !important;
-            color: white !important;
-        }
-        .badge.bg-danger {
-            background: #C47B7A !important;
-            color: white !important;
-        }
-        .badge.bg-warning {
-            background: #C4D8E5 !important;
-            color: #1C2B48 !important;
-        }
-        .badge.bg-info {
-            background: #A7C7E7 !important;
-            color: #1C2B48 !important;
-        }
-        
-        /* Buttons */
-        .btn-primary {
-            background: linear-gradient(135deg, #8EB1D1, #A7C7E7);
-            border: none;
-            color: #1C2B48;
-        }
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #A7C7E7, #8EB1D1);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(28, 43, 72, 0.3);
-            color: #1C2B48;
-        }
-        .btn-outline-primary {
-            color: #8EB1D1;
-            border-color: #8EB1D1;
-        }
-        .btn-outline-primary:hover {
-            background: #8EB1D1;
-            color: #1C2B48;
-            border-color: #8EB1D1;
+            transform: translateY(-4px);
+            border-color: #3b82f6 !important;
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.15);
         }
         .btn-outline-secondary {
-            color: #C4D8E5;
-            border-color: #C4D8E5;
+            color: #94a3b8 !important;
+            border-color: rgba(148, 163, 184, 0.2) !important;
         }
         .btn-outline-secondary:hover {
-            background: #C4D8E5;
-            color: #1C2B48;
-            border-color: #C4D8E5;
+            background: rgba(148, 163, 184, 0.1) !important;
+            color: white !important;
         }
-        
-        /* Table */
-        .table-dark {
-            background: #1C2B48 !important;
-        }
-        .table-striped > tbody > tr:nth-of-type(odd) {
-            background-color: rgba(142, 177, 209, 0.08);
+        .table > :not(caption) > * > * {
+            background-color: transparent !important;
         }
         .table-hover > tbody > tr:hover {
-            background-color: rgba(167, 199, 231, 0.15);
-        }
-        
-        /* Pagination */
-        .pagination .page-link {
-            color: #1C2B48;
-            border-color: #C4D8E5;
-            border-radius: 5px;
-            margin: 0 2px;
-        }
-        .pagination .page-link:hover {
-            background: #A7C7E7;
-            border-color: #8EB1D1;
-        }
-        .pagination .active .page-link {
-            background: #8EB1D1;
-            border-color: #8EB1D1;
-            color: #1C2B48;
-        }
-        
-        /* Text Colors */
-        .text-primary {
-            color: #8EB1D1 !important;
-        }
-        .text-muted {
-            color: #1C2B48 !important;
-            opacity: 0.6;
-        }
-        
-        /* Spinner */
-        .spinner-border.text-primary {
-            color: #8EB1D1 !important;
+            background-color: rgba(59, 130, 246, 0.05) !important;
         }
     </style>
 }
@@ -414,15 +324,5 @@
                 }
             });
         });
-
-        // Auto-hide flash messages after 5 seconds
-        setTimeout(function() {
-            const alerts = document.querySelectorAll('.alert.alert-dismissible');
-            alerts.forEach(alert => {
-                alert.style.transition = 'opacity 1s';
-                alert.style.opacity = '0';
-                setTimeout(() => alert.remove(), 1000);
-            });
-        }, 5000);
     </script>
 }

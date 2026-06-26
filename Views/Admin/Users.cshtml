@@ -1,0 +1,80 @@
+@model List<MyFirstNewProject.Models.ApplicationUser>
+
+@{
+    ViewData["Title"] = "User Management";
+}
+
+<div class="container-fluid px-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-6 fw-bold">
+                <i class="bi bi-people text-primary"></i> User Management
+            </h1>
+            <p class="text-muted">Manage all registered users</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Back to Admin
+        </a>
+    </div>
+
+    <div class="card border-0">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Email</th>
+                            <th>Full Name</th>
+                            <th>Role</th>
+                            <th>Created At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model != null && Model.Any())
+                        {
+                            var counter = 1;
+                            var userRoles = ViewBag.UserRoles as Dictionary<string, string>;
+                            foreach (var user in Model)
+                            {
+                                var role = userRoles?.ContainsKey(user.Id) == true ? userRoles[user.Id] : "No Role";
+                                <tr>
+                                    <td>@counter</td>
+                                    <td>@user.Email</td>
+                                    <td>@(user.FullName ?? "N/A")</td>
+                                    <td>
+                                        <span class="badge @(role == "Admin" ? "bg-danger" : role == "Manager" ? "bg-warning" : "bg-info")">
+                                            @role
+                                        </span>
+                                    </td>
+                                    <td>@user.CreatedAt?.ToString("yyyy-MM-dd")</td>
+                                </tr>
+                                counter++;
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="5" class="text-center py-5">
+                                    <i class="bi bi-inbox display-1 d-block text-muted"></i>
+                                    <h4 class="text-muted">No users found</h4>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <style>
+        .badge.bg-warning {
+            color: #0a0e1a !important;
+        }
+        .badge.bg-info {
+            color: #0a0e1a !important;
+        }
+    </style>
+}

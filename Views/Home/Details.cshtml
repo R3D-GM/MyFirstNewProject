@@ -4,109 +4,104 @@
     ViewData["Title"] = "Customer Details";
 }
 
-<div class="container mt-4">
-    <div class="row">
-        <div class="col-md-8 offset-md-2">
-            <!-- Back Button -->
-            <a href="@Url.Action("Index")" class="btn btn-outline-secondary mb-3">
-                <i class="bi bi-arrow-left"></i> Back to List
-            </a>
+<div class="container-fluid px-0">
+    <a href="@Url.Action("Index")" class="btn btn-outline-secondary mb-4">
+        <i class="bi bi-arrow-left"></i> Back to List
+    </a>
 
-            <div class="card shadow-lg">
-                <div class="card-header bg-primary text-white">
-                    <h2 class="mb-0">
-                        <i class="bi bi-person-badge"></i> Customer Details
-                    </h2>
-                </div>
-                <div class="card-body">
-                    @if (ViewBag.Error != null)
-                    {
-                        <div class="alert alert-danger">@ViewBag.Error</div>
-                    }
+    <div class="card border-0">
+        <div class="card-header">
+            <h2 class="mb-0">
+                <i class="bi bi-person-badge text-primary"></i> Customer Details
+            </h2>
+        </div>
+        <div class="card-body">
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger">@ViewBag.Error</div>
+            }
 
-                    @if (Model != null)
-                    {
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="fw-bold text-muted">ID</label>
-                                    <p class="fs-5">@Model.Id</p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="fw-bold text-muted">Code</label>
-                                    <p><span class="badge bg-secondary fs-6">@Model.Code</span></p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="fw-bold text-muted">Full Name</label>
-                                    <p class="fs-5">
-                                        @Model.FirstName 
-                                        @if (!string.IsNullOrEmpty(Model.SecondName))
-                                        {
-                                            <span>@Model.SecondName</span>
-                                        }
-                                        @if (!string.IsNullOrEmpty(Model.ThirdName))
-                                        {
-                                            <span>@Model.ThirdName</span>
-                                        }
-                                    </p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="fw-bold text-muted">Type</label>
-                                    <p>
-                                        <span class="badge @(Model.IsPerson ? "bg-info" : "bg-warning") fs-6">
-                                            @(Model.IsPerson ? "👤 Person" : "🏢 Company")
-                                        </span>
-                                    </p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="fw-bold text-muted">Business Type</label>
-                                    <p>@(Model.BusinessType ?? "N/A")</p>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="mb-3">
-                                    <label class="fw-bold text-muted">Status</label>
-                                    <p>
-                                        <span class="badge @(Model.IsActive ? "bg-success" : "bg-danger") fs-6">
-                                            @(Model.IsActive ? "✅ Active" : "❌ Inactive")
-                                        </span>
-                                    </p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="fw-bold text-muted">TIN</label>
-                                    <p>@(Model.Tin ?? "N/A")</p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="fw-bold text-muted">Gender</label>
-                                    <p>@(Model.Gender ?? "N/A")</p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="fw-bold text-muted">Created On</label>
-                                    <p>@Model.CreatedOn.ToString("yyyy-MM-dd HH:mm")</p>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="fw-bold text-muted">Last Modified</label>
-                                    <p>@Model.LastModified.ToString("yyyy-MM-dd HH:mm")</p>
-                                </div>
-                            </div>
+            @if (Model != null)
+            {
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <label class="text-muted small text-uppercase fw-semibold">ID</label>
+                            <p class="fs-4 fw-bold">@Model.Id</p>
                         </div>
-
-                        <hr />
-
-                        <div class="d-flex justify-content-between">
-                            <a href="@Url.Action("Index")" class="btn btn-secondary">
-                                <i class="bi bi-arrow-left"></i> Back to List
-                            </a>
-                            <span class="text-muted">ID: @Model.Id</span>
+                        <div class="mb-4">
+                            <label class="text-muted small text-uppercase fw-semibold">Code</label>
+                            <p><span class="badge bg-secondary">@Model.Code</span></p>
                         </div>
-                    }
-                    else
-                    {
-                        <div class="alert alert-warning">Customer not found</div>
-                        <a href="@Url.Action("Index")" class="btn btn-secondary">Back to List</a>
-                    }
+                        <div class="mb-4">
+                            <label class="text-muted small text-uppercase fw-semibold">Full Name</label>
+                            <p class="fs-5">
+                                @Model.FirstName 
+                                @if (!string.IsNullOrEmpty(Model.SecondName))
+                                {
+                                    <span>@Model.SecondName</span>
+                                }
+                                @if (!string.IsNullOrEmpty(Model.ThirdName))
+                                {
+                                    <span>@Model.ThirdName</span>
+                                }
+                            </p>
+                        </div>
+                        <div class="mb-4">
+                            <label class="text-muted small text-uppercase fw-semibold">Type</label>
+                            <p>
+                                <span class="badge @(Model.IsPerson ? "bg-info" : "bg-warning") fs-6">
+                                    @(Model.IsPerson ? "👤 Person" : "🏢 Company")
+                                </span>
+                            </p>
+                        </div>
+                        <div class="mb-4">
+                            <label class="text-muted small text-uppercase fw-semibold">Business Type</label>
+                            <p>@(Model.BusinessType ?? "N/A")</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-4">
+                            <label class="text-muted small text-uppercase fw-semibold">Status</label>
+                            <p>
+                                <span class="badge @(Model.IsActive ? "bg-success" : "bg-danger") fs-6">
+                                    @(Model.IsActive ? "✅ Active" : "❌ Inactive")
+                                </span>
+                            </p>
+                        </div>
+                        <div class="mb-4">
+                            <label class="text-muted small text-uppercase fw-semibold">TIN</label>
+                            <p>@(Model.Tin ?? "N/A")</p>
+                        </div>
+                        <div class="mb-4">
+                            <label class="text-muted small text-uppercase fw-semibold">Gender</label>
+                            <p>@(Model.Gender ?? "N/A")</p>
+                        </div>
+                        <div class="mb-4">
+                            <label class="text-muted small text-uppercase fw-semibold">Created On</label>
+                            <p>@Model.CreatedOn.ToString("yyyy-MM-dd HH:mm")</p>
+                        </div>
+                        <div class="mb-4">
+                            <label class="text-muted small text-uppercase fw-semibold">Last Modified</label>
+                            <p>@Model.LastModified.ToString("yyyy-MM-dd HH:mm")</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
+
+                <hr class="border-secondary" />
+
+                <div class="d-flex justify-content-between align-items-center">
+                    <a href="@Url.Action("Index")" class="btn btn-primary">
+                        <i class="bi bi-arrow-left"></i> Back to List
+                    </a>
+                    <span class="text-muted">ID: @Model.Id</span>
+                </div>
+            }
+            else
+            {
+                <div class="alert alert-warning">Customer not found</div>
+                <a href="@Url.Action("Index")" class="btn btn-primary">Back to List</a>
+            }
         </div>
     </div>
 </div>
@@ -114,76 +109,41 @@
 @section Styles {
     <style>
         .card {
-            border-radius: 15px;
-            border: none;
+            background: linear-gradient(145deg, #111827, #0d1420) !important;
+            border: 1px solid rgba(59, 130, 246, 0.15) !important;
+            border-radius: 16px !important;
         }
         .card-header {
-            border-radius: 15px 15px 0 0;
-            background: linear-gradient(135deg, #3E2723, #5D4037) !important;
+            border-bottom: 1px solid rgba(59, 130, 246, 0.1) !important;
+            background: transparent !important;
         }
         .badge {
-            padding: 8px 15px;
+            padding: 8px 16px;
         }
-        .badge.bg-secondary {
-            background: #8D6E63 !important;
-        }
-        .badge.bg-success {
-            background: #5D8A6E !important;
-        }
-        .badge.bg-danger {
-            background: #A0524A !important;
-        }
-        .badge.bg-warning {
-            background: #D4A373 !important;
-            color: #3E2723 !important;
-        }
-        .badge.bg-info {
-            background: #6B8E9C !important;
-        }
-        label {
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: #5D4037;
-        }
-        .btn-secondary {
-            background: linear-gradient(135deg, #5D4037, #8D6E63);
-            border: none;
-            color: white;
-        }
-        .btn-secondary:hover {
-            background: linear-gradient(135deg, #3E2723, #5D4037);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(62, 39, 35, 0.3);
-            color: white;
-        }
-        .btn-outline-secondary {
-            color: #5D4037;
-            border-color: #5D4037;
-        }
-        .btn-outline-secondary:hover {
-            background: #5D4037;
-            color: white;
-            border-color: #5D4037;
-        }
-        .text-muted {
-            color: #8D6E63 !important;
-        }
-        .alert-warning {
-            background-color: #EFEBE9;
-            border-color: #D4A373;
-            color: #3E2723;
-        }
-        .alert-danger {
-            background-color: #F5E6E4;
-            border-color: #A0524A;
-            color: #3E2723;
-        }
-        .fs-5 {
-            color: #3E2723;
+        .badge.fs-6 {
+            font-size: 1rem;
         }
         hr {
-            border-color: #D4C8C0;
+            border-color: rgba(59, 130, 246, 0.1) !important;
+        }
+        .text-muted {
+            color: #94a3b8 !important;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #60a5fa, #a78bfa) !important;
+            border: none !important;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(96, 165, 250, 0.4);
+        }
+        .btn-outline-secondary {
+            color: #94a3b8 !important;
+            border-color: rgba(148, 163, 184, 0.2) !important;
+        }
+        .btn-outline-secondary:hover {
+            background: rgba(148, 163, 184, 0.1) !important;
+            color: white !important;
         }
     </style>
 }

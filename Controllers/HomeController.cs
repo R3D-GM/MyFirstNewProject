@@ -1,9 +1,11 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MyFirstNewProject.Services;
 using MyFirstNewProject.Models;
 using System.Diagnostics;
 
 namespace MyFirstNewProject.Controllers;
+[Authorize]
 
 public class HomeController : Controller
 {

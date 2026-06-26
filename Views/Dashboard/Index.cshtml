@@ -4,18 +4,213 @@
     ViewData["Title"] = "Executive Dashboard";
 }
 
-<div class="container-fluid mt-4">
-    <!-- Page Header -->
+<style>
+    /* Dark Theme Base */
+    body {
+        background-color: #0a0e1a !important;
+        color: #ffffff !important;
+    }
+
+    .container-fluid {
+        background-color: #0a0e1a !important;
+    }
+
+    .card {
+        background: linear-gradient(145deg, #111827, #0d1420) !important;
+        border: 1px solid rgba(59, 130, 246, 0.15) !important;
+        border-radius: 16px !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(10px);
+    }
+
+    .card:hover {
+        border-color: rgba(59, 130, 246, 0.3) !important;
+        box-shadow: 0 8px 40px rgba(59, 130, 246, 0.1);
+    }
+
+    .card-header {
+        background: transparent !important;
+        border-bottom: 1px solid rgba(59, 130, 246, 0.1) !important;
+        color: #e2e8f0;
+        font-weight: 600;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .text-muted {
+        color: #94a3b8 !important;
+    }
+
+    .text-primary {
+        color: #60a5fa !important;
+    }
+
+    /* Stats Cards */
+    .stats-card {
+        background: linear-gradient(145deg, #111827, #0d1420) !important;
+        border: 1px solid rgba(59, 130, 246, 0.12) !important;
+        border-radius: 16px !important;
+        transition: all 0.3s ease;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-6px);
+        border-color: rgba(59, 130, 246, 0.3) !important;
+        box-shadow: 0 12px 40px rgba(59, 130, 246, 0.15);
+    }
+
+    .stats-card .display-4 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        background: linear-gradient(135deg, #60a5fa, #a78bfa);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stats-card .display-4.text-success {
+        background: linear-gradient(135deg, #34d399, #10b981);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stats-card .display-4.text-warning {
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .stats-card .display-4.text-info {
+        background: linear-gradient(135deg, #22d3ee, #06b6d4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+    .bg-opacity-10 {
+        opacity: 0.1;
+    }
+
+    .bg-primary.bg-opacity-10 {
+        background: rgba(96, 165, 250, 0.1) !important;
+    }
+
+    .bg-success.bg-opacity-10 {
+        background: rgba(52, 211, 153, 0.1) !important;
+    }
+
+    .bg-warning.bg-opacity-10 {
+        background: rgba(251, 191, 36, 0.1) !important;
+    }
+
+    .bg-info.bg-opacity-10 {
+        background: rgba(34, 211, 238, 0.1) !important;
+    }
+
+    .badge {
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+    }
+
+    .badge.bg-primary {
+        background: rgba(96, 165, 250, 0.15) !important;
+        color: #60a5fa !important;
+    }
+
+    .badge.bg-success {
+        background: rgba(52, 211, 153, 0.15) !important;
+        color: #34d399 !important;
+    }
+
+    .badge.bg-warning {
+        background: rgba(251, 191, 36, 0.15) !important;
+        color: #fbbf24 !important;
+    }
+
+    .badge.bg-info {
+        background: rgba(34, 211, 238, 0.15) !important;
+        color: #22d3ee !important;
+    }
+
+    .list-group-item {
+        background: transparent !important;
+        border-bottom: 1px solid rgba(59, 130, 246, 0.08) !important;
+        color: #e2e8f0 !important;
+        padding: 0.75rem 0;
+    }
+
+    .list-group-item:last-child {
+        border-bottom: none !important;
+    }
+
+    .bg-dark {
+        background: #0a0e1a !important;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #60a5fa, #a78bfa) !important;
+        border: none !important;
+        color: white !important;
+        font-weight: 600;
+        padding: 0.6rem 1.5rem;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(96, 165, 250, 0.4);
+    }
+
+    .btn-outline-primary {
+        color: #60a5fa !important;
+        border: 1px solid rgba(96, 165, 250, 0.3) !important;
+        background: transparent !important;
+    }
+
+    .btn-outline-primary:hover {
+        background: rgba(96, 165, 250, 0.1) !important;
+        border-color: #60a5fa !important;
+    }
+
+    /* Dark Scrollbar */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #0a0e1a;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #1e293b;
+        border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #334155;
+    }
+</style>
+
+<div class="container-fluid px-0">
+    <!-- Welcome Section -->
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h1 class="display-5">
-                <i class="bi bi-speedometer2 text-primary"></i> Executive Dashboard
+            <h1 class="display-6 fw-bold" style="background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                <i class="bi bi-graph-up-arrow" style="-webkit-text-fill-color: #60a5fa;"></i> Welcome back, Executive
             </h1>
             <p class="text-muted">Real-time customer insights and analytics</p>
         </div>
         <div>
-            <span class="badge bg-success rounded-pill fs-6 p-3">
-                <i class="bi bi-check-circle"></i> Data Updated: @DateTime.Now.ToString("hh:mm tt")
+            <span class="badge bg-primary rounded-pill fs-6 p-3">
+                <i class="bi bi-check-circle"></i> Live
             </span>
         </div>
     </div>
@@ -28,130 +223,123 @@
         </div>
     }
 
-    <!-- LOADING SPINNER -->
+    <!-- Loading Spinner -->
     <div id="loadingSpinner" class="text-center py-5" style="display: none;">
         <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
             <span class="visually-hidden">Loading...</span>
         </div>
-        <p class="mt-2">Loading dashboard data...</p>
+        <p class="mt-2 text-muted">Loading dashboard data...</p>
     </div>
 
-    <!-- KPI CARDS ROW -->
+    <!-- KPI CARDS -->
     <div class="row g-4 mb-4">
-        <!-- Total Customers -->
         <div class="col-xl-3 col-md-6">
-            <div class="card stats-card bg-primary text-white shadow-sm h-100">
+            <div class="card stats-card border-0 h-100">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h6 class="card-title text-white-50">Total Customers</h6>
-                            <h2 class="mb-0">@Model.TotalCustomers</h2>
+                            <span class="text-muted text-uppercase small fw-semibold">Total Customers</span>
+                            <h2 class="display-4 fw-bold mb-0">@Model.TotalCustomers</h2>
                         </div>
-                        <div class="display-4 opacity-50">
-                            <i class="bi bi-people"></i>
+                        <div class="bg-primary bg-opacity-10 p-3 rounded-3">
+                            <i class="bi bi-people fs-2 text-primary"></i>
                         </div>
                     </div>
                     <div class="mt-3">
-                        <small><i class="bi bi-arrow-up"></i> 100% of data</small>
+                        <span class="badge bg-primary">
+                            <i class="bi bi-arrow-up"></i> 100% of total data
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Active Customers -->
         <div class="col-xl-3 col-md-6">
-            <div class="card stats-card bg-success text-white shadow-sm h-100">
+            <div class="card stats-card border-0 h-100">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h6 class="card-title text-white-50">Active Customers</h6>
-                            <h2 class="mb-0">@Model.ActiveCustomers</h2>
+                            <span class="text-muted text-uppercase small fw-semibold">Active Customers</span>
+                            <h2 class="display-4 fw-bold text-success mb-0">@Model.ActiveCustomers</h2>
                         </div>
-                        <div class="display-4 opacity-50">
-                            <i class="bi bi-check-circle-fill"></i>
+                        <div class="bg-success bg-opacity-10 p-3 rounded-3">
+                            <i class="bi bi-check-circle-fill fs-2 text-success"></i>
                         </div>
                     </div>
                     <div class="mt-3">
-                        <small>
-                            <i class="bi bi-arrow-up"></i> 
-                            @(Model.TotalCustomers > 0 ? Math.Round((double)Model.ActiveCustomers / Model.TotalCustomers * 100) : 0)% of total
-                        </small>
+                        <span class="badge bg-success">
+                            <i class="bi bi-arrow-up"></i> @(Model.TotalCustomers > 0 ? Math.Round((double)Model.ActiveCustomers / Model.TotalCustomers * 100) : 0)% of total
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Companies -->
         <div class="col-xl-3 col-md-6">
-            <div class="card stats-card bg-warning text-dark shadow-sm h-100">
+            <div class="card stats-card border-0 h-100">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h6 class="card-title text-dark-50">Companies</h6>
-                            <h2 class="mb-0">@Model.TotalCompanies</h2>
+                            <span class="text-muted text-uppercase small fw-semibold">Companies</span>
+                            <h2 class="display-4 fw-bold text-warning mb-0">@Model.TotalCompanies</h2>
                         </div>
-                        <div class="display-4 opacity-50">
-                            <i class="bi bi-building"></i>
+                        <div class="bg-warning bg-opacity-10 p-3 rounded-3">
+                            <i class="bi bi-building fs-2 text-warning"></i>
                         </div>
                     </div>
                     <div class="mt-3">
-                        <small>
-                            <i class="bi bi-arrow-right"></i> 
-                            @(Model.TotalCustomers > 0 ? Math.Round((double)Model.TotalCompanies / Model.TotalCustomers * 100) : 0)% of total
-                        </small>
+                        <span class="badge bg-warning">
+                            <i class="bi bi-arrow-right"></i> @(Model.TotalCustomers > 0 ? Math.Round((double)Model.TotalCompanies / Model.TotalCustomers * 100) : 0)% of total
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Persons -->
         <div class="col-xl-3 col-md-6">
-            <div class="card stats-card bg-info text-white shadow-sm h-100">
+            <div class="card stats-card border-0 h-100">
                 <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-between align-items-start">
                         <div>
-                            <h6 class="card-title text-white-50">Persons</h6>
-                            <h2 class="mb-0">@Model.TotalPersons</h2>
+                            <span class="text-muted text-uppercase small fw-semibold">Persons</span>
+                            <h2 class="display-4 fw-bold text-info mb-0">@Model.TotalPersons</h2>
                         </div>
-                        <div class="display-4 opacity-50">
-                            <i class="bi bi-person"></i>
+                        <div class="bg-info bg-opacity-10 p-3 rounded-3">
+                            <i class="bi bi-person fs-2 text-info"></i>
                         </div>
                     </div>
                     <div class="mt-3">
-                        <small>
-                            <i class="bi bi-arrow-right"></i> 
-                            @(Model.TotalCustomers > 0 ? Math.Round((double)Model.TotalPersons / Model.TotalCustomers * 100) : 0)% of total
-                        </small>
+                        <span class="badge bg-info">
+                            <i class="bi bi-arrow-right"></i> @(Model.TotalCustomers > 0 ? Math.Round((double)Model.TotalPersons / Model.TotalCustomers * 100) : 0)% of total
+                        </span>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- CHARTS ROW -->
+    <!-- CHARTS -->
     <div class="row g-4 mb-4">
-        <!-- Pie Chart -->
         <div class="col-xl-6 col-md-12">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-white">
+            <div class="card border-0 h-100">
+                <div class="card-header">
                     <h5 class="mb-0"><i class="bi bi-pie-chart text-primary"></i> Customer Type Distribution</h5>
                 </div>
                 <div class="card-body">
-                    <div style="height: 300px;">
+                    <div style="height: 280px;">
                         <canvas id="customerTypeChart"></canvas>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Doughnut Chart -->
         <div class="col-xl-6 col-md-12">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-white">
+            <div class="card border-0 h-100">
+                <div class="card-header">
                     <h5 class="mb-0"><i class="bi bi-circle text-success"></i> Status Distribution</h5>
                 </div>
                 <div class="card-body">
-                    <div style="height: 300px;">
+                    <div style="height: 280px;">
                         <canvas id="statusChart"></canvas>
                     </div>
                 </div>
@@ -159,15 +347,15 @@
         </div>
     </div>
 
-    <!-- BAR CHART - Analytics -->
+    <!-- BAR CHART -->
     <div class="row g-4 mb-4">
         <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white">
+            <div class="card border-0">
+                <div class="card-header">
                     <h5 class="mb-0"><i class="bi bi-bar-chart text-primary"></i> Customer Analytics Overview</h5>
                 </div>
                 <div class="card-body">
-                    <div style="height: 300px;">
+                    <div style="height: 280px;">
                         <canvas id="analyticsChart"></canvas>
                     </div>
                 </div>
@@ -175,16 +363,15 @@
         </div>
     </div>
 
-    <!-- CUSTOMER ANALYTICS MODULE -->
+    <!-- CUSTOMER ANALYTICS -->
     <div class="row g-4 mb-4">
         <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white">
+            <div class="card border-0">
+                <div class="card-header">
                     <h5 class="mb-0"><i class="bi bi-graph-up text-primary"></i> Customer Analytics</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row">
-                        <!-- Business Type Distribution -->
+                    <div class="row g-4">
                         <div class="col-md-6">
                             <h6 class="text-muted mb-3">
                                 <i class="bi bi-tags"></i> Business Type Distribution
@@ -208,8 +395,8 @@
                                         <div class="list-group-item d-flex justify-content-between align-items-center">
                                             <span>@group.Type</span>
                                             <span>
-                                                <span class="badge bg-primary rounded-pill me-2">@group.Count</span>
-                                                <span class="badge bg-secondary rounded-pill">@percentage%</span>
+                                                <span class="badge bg-primary me-2">@group.Count</span>
+                                                <span class="badge bg-secondary">@percentage%</span>
                                             </span>
                                         </div>
                                     }
@@ -221,62 +408,61 @@
                             }
                         </div>
 
-                        <!-- Quick Analytics Stats -->
                         <div class="col-md-6">
                             <h6 class="text-muted mb-3">
                                 <i class="bi bi-lightning"></i> Key Insights
                             </h6>
                             <div class="row g-3">
                                 <div class="col-6">
-                                    <div class="card bg-light">
+                                    <div class="card bg-dark border-0">
                                         <div class="card-body text-center">
-                                            <h6 class="text-muted">Most Common Type</h6>
+                                            <h6 class="text-muted small">Most Common Type</h6>
                                             @{
                                                 var mostCommon = businessGroups.FirstOrDefault();
                                             }
-                                            <h4>@(mostCommon?.Type ?? "N/A")</h4>
+                                            <h4 class="fw-bold text-primary">@(mostCommon?.Type ?? "N/A")</h4>
                                             <small class="text-muted">@(mostCommon?.Count ?? 0) customers</small>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="card bg-light">
+                                    <div class="card bg-dark border-0">
                                         <div class="card-body text-center">
-                                            <h6 class="text-muted">Active Rate</h6>
+                                            <h6 class="text-muted small">Active Rate</h6>
                                             @{
                                                 var activeRate = Model.TotalCustomers > 0 
                                                     ? Math.Round((double)Model.ActiveCustomers / Model.TotalCustomers * 100) 
                                                     : 0;
                                             }
-                                            <h4>@activeRate%</h4>
-                                            <small class="text-muted">@Model.ActiveCustomers active customers</small>
+                                            <h4 class="fw-bold text-success">@activeRate%</h4>
+                                            <small class="text-muted">@Model.ActiveCustomers active</small>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="card bg-light">
+                                    <div class="card bg-dark border-0">
                                         <div class="card-body text-center">
-                                            <h6 class="text-muted">Company Ratio</h6>
+                                            <h6 class="text-muted small">Company Ratio</h6>
                                             @{
                                                 var companyRatio = Model.TotalCustomers > 0 
                                                     ? Math.Round((double)Model.TotalCompanies / Model.TotalCustomers * 100) 
                                                     : 0;
                                             }
-                                            <h4>@companyRatio%</h4>
+                                            <h4 class="fw-bold text-warning">@companyRatio%</h4>
                                             <small class="text-muted">@Model.TotalCompanies companies</small>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <div class="card bg-light">
+                                    <div class="card bg-dark border-0">
                                         <div class="card-body text-center">
-                                            <h6 class="text-muted">Person Ratio</h6>
+                                            <h6 class="text-muted small">Person Ratio</h6>
                                             @{
                                                 var personRatio = Model.TotalCustomers > 0 
                                                     ? Math.Round((double)Model.TotalPersons / Model.TotalCustomers * 100) 
                                                     : 0;
                                             }
-                                            <h4>@personRatio%</h4>
+                                            <h4 class="fw-bold text-info">@personRatio%</h4>
                                             <small class="text-muted">@Model.TotalPersons persons</small>
                                         </div>
                                     </div>
@@ -292,27 +478,27 @@
     <!-- QUICK STATISTICS -->
     <div class="row g-4">
         <div class="col-12">
-            <div class="card shadow-sm">
-                <div class="card-header bg-white">
+            <div class="card border-0">
+                <div class="card-header">
                     <h5 class="mb-0"><i class="bi bi-clipboard-data text-primary"></i> Quick Statistics</h5>
                 </div>
                 <div class="card-body">
                     <div class="row text-center">
                         <div class="col-md-3">
-                            <h6 class="text-muted">Total Customers</h6>
-                            <h3>@Model.TotalCustomers</h3>
+                            <h6 class="text-muted small">Total Customers</h6>
+                            <h3 class="fw-bold" style="background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">@Model.TotalCustomers</h3>
                         </div>
                         <div class="col-md-3">
-                            <h6 class="text-muted">Active Rate</h6>
-                            <h3>@(Model.TotalCustomers > 0 ? Math.Round((double)Model.ActiveCustomers / Model.TotalCustomers * 100) : 0)%</h3>
+                            <h6 class="text-muted small">Active Rate</h6>
+                            <h3 class="fw-bold text-success">@(Model.TotalCustomers > 0 ? Math.Round((double)Model.ActiveCustomers / Model.TotalCustomers * 100) : 0)%</h3>
                         </div>
                         <div class="col-md-3">
-                            <h6 class="text-muted">Companies</h6>
-                            <h3>@Model.TotalCompanies</h3>
+                            <h6 class="text-muted small">Companies</h6>
+                            <h3 class="fw-bold text-warning">@Model.TotalCompanies</h3>
                         </div>
                         <div class="col-md-3">
-                            <h6 class="text-muted">Persons</h6>
-                            <h3>@Model.TotalPersons</h3>
+                            <h6 class="text-muted small">Persons</h6>
+                            <h3 class="fw-bold text-info">@Model.TotalPersons</h3>
                         </div>
                     </div>
                 </div>
@@ -323,9 +509,7 @@
 
 @section Scripts {
     <script>
-        // ========================================
-        // LOADING SPINNER
-        // ========================================
+        // Loading Spinner
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('loadingSpinner').style.display = 'none';
         });
@@ -339,7 +523,7 @@
         });
 
         // ========================================
-        // 1. PIE CHART - Customer Type
+        // 1. PIE CHART - Advanced Colors
         // ========================================
         var ctx1 = document.getElementById('customerTypeChart').getContext('2d');
         new Chart(ctx1, {
@@ -348,9 +532,16 @@
                 labels: ['Companies', 'Persons'],
                 datasets: [{
                     data: [@Model.TotalCompanies, @Model.TotalPersons],
-                    backgroundColor: ['#FFB74D', '#64B5F6'],
-                    borderColor: ['#F57C00', '#1976D2'],
-                    borderWidth: 2
+                    backgroundColor: [
+                        'rgba(251, 191, 36, 0.85)',
+                        'rgba(96, 165, 250, 0.85)'
+                    ],
+                    borderColor: [
+                        'rgba(251, 191, 36, 1)',
+                        'rgba(96, 165, 250, 1)'
+                    ],
+                    borderWidth: 3,
+                    hoverOffset: 15
                 }]
             },
             options: {
@@ -358,14 +549,26 @@
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: 'bottom'
+                        position: 'bottom',
+                        labels: {
+                            color: '#94a3b8',
+                            padding: 20,
+                            font: {
+                                size: 13,
+                                weight: '500'
+                            }
+                        }
                     }
+                },
+                animation: {
+                    animateRotate: true,
+                    duration: 1500
                 }
             }
         });
 
         // ========================================
-        // 2. DOUGHNUT CHART - Status
+        // 2. DOUGHNUT CHART - Advanced Colors
         // ========================================
         var ctx2 = document.getElementById('statusChart').getContext('2d');
         new Chart(ctx2, {
@@ -374,9 +577,17 @@
                 labels: ['Active', 'Inactive'],
                 datasets: [{
                     data: [@Model.ActiveCustomers, @Model.InactiveCustomers],
-                    backgroundColor: ['#66BB6A', '#EF5350'],
-                    borderColor: ['#2E7D32', '#C62828'],
-                    borderWidth: 2
+                    backgroundColor: [
+                        'rgba(52, 211, 153, 0.85)',
+                        'rgba(251, 113, 133, 0.85)'
+                    ],
+                    borderColor: [
+                        'rgba(52, 211, 153, 1)',
+                        'rgba(251, 113, 133, 1)'
+                    ],
+                    borderWidth: 3,
+                    hoverOffset: 15,
+                    cutout: '65%'
                 }]
             },
             options: {
@@ -384,20 +595,32 @@
                 maintainAspectRatio: false,
                 plugins: {
                     legend: {
-                        position: 'bottom'
+                        position: 'bottom',
+                        labels: {
+                            color: '#94a3b8',
+                            padding: 20,
+                            font: {
+                                size: 13,
+                                weight: '500'
+                            }
+                        }
                     }
+                },
+                animation: {
+                    animateRotate: true,
+                    duration: 1500
                 }
             }
         });
 
         // ========================================
-        // 3. BAR CHART - Analytics
+        // 3. BAR CHART - Advanced Colors
         // ========================================
         var ctx3 = document.getElementById('analyticsChart').getContext('2d');
         new Chart(ctx3, {
             type: 'bar',
             data: {
-                labels: ['Total Customers', 'Active', 'Inactive', 'Companies', 'Persons'],
+                labels: ['Total', 'Active', 'Inactive', 'Companies', 'Persons'],
                 datasets: [{
                     label: 'Customer Analytics',
                     data: [
@@ -408,21 +631,28 @@
                         @Model.TotalPersons
                     ],
                     backgroundColor: [
-                        '#4FC3F7',
-                        '#66BB6A',
-                        '#EF5350',
-                        '#FFB74D',
-                        '#64B5F6'
+                        'rgba(96, 165, 250, 0.8)',
+                        'rgba(52, 211, 153, 0.8)',
+                        'rgba(251, 113, 133, 0.8)',
+                        'rgba(251, 191, 36, 0.8)',
+                        'rgba(34, 211, 238, 0.8)'
                     ],
                     borderColor: [
-                        '#0288D1',
-                        '#2E7D32',
-                        '#C62828',
-                        '#F57C00',
-                        '#1976D2'
+                        'rgba(96, 165, 250, 1)',
+                        'rgba(52, 211, 153, 1)',
+                        'rgba(251, 113, 133, 1)',
+                        'rgba(251, 191, 36, 1)',
+                        'rgba(34, 211, 238, 1)'
                     ],
                     borderWidth: 2,
-                    borderRadius: 8
+                    borderRadius: 10,
+                    hoverBackgroundColor: [
+                        'rgba(96, 165, 250, 1)',
+                        'rgba(52, 211, 153, 1)',
+                        'rgba(251, 113, 133, 1)',
+                        'rgba(251, 191, 36, 1)',
+                        'rgba(34, 211, 238, 1)'
+                    ]
                 }]
             },
             options: {
@@ -437,63 +667,35 @@
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            stepSize: 1
+                            color: '#94a3b8',
+                            stepSize: 1,
+                            font: {
+                                size: 12
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(148, 163, 184, 0.08)',
+                            drawBorder: false
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#94a3b8',
+                            font: {
+                                size: 12,
+                                weight: '500'
+                            }
+                        },
+                        grid: {
+                            display: false
                         }
                     }
+                },
+                animation: {
+                    duration: 1200,
+                    easing: 'easeInOutQuart'
                 }
             }
         });
     </script>
-}
-
-@section Styles {
-    <style>
-        .stats-card {
-            border-radius: 15px;
-            border: none;
-            transition: transform 0.2s;
-        }
-        .stats-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-        }
-        .card {
-            border-radius: 15px;
-            border: none;
-        }
-        .card-header {
-            border-radius: 15px 15px 0 0;
-        }
-        .bg-primary {
-            background: linear-gradient(135deg, #8EB1D1, #A7C7E7) !important;
-            color: #1C2B48 !important;
-        }
-        .bg-success {
-            background: linear-gradient(135deg, #4A7C5E, #6B9E7A) !important;
-        }
-        .bg-warning {
-            background: linear-gradient(135deg, #C4D8E5, #E8ECEF) !important;
-            color: #1C2B48 !important;
-        }
-        .bg-info {
-            background: linear-gradient(135deg, #A7C7E7, #8EB1D1) !important;
-            color: #1C2B48 !important;
-        }
-        .text-white-50 {
-            color: rgba(28, 43, 72, 0.6) !important;
-        }
-        .text-dark-50 {
-            color: rgba(28, 43, 72, 0.6) !important;
-        }
-        .list-group-item {
-            border: none;
-            border-bottom: 1px solid #e9ecef;
-        }
-        .list-group-item:last-child {
-            border-bottom: none;
-        }
-        .bg-light {
-            background-color: #f8f9fa !important;
-        }
-    </style>
 }
