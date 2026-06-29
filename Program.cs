@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
 using MyFirstNewProject.Data;
 using MyFirstNewProject.Models;
 using MyFirstNewProject.Services;
@@ -82,6 +81,12 @@ builder.Services.Configure<GzipCompressionProviderOptions>(options =>
 {
     options.Level = System.IO.Compression.CompressionLevel.Fastest;
 });
+
+// ============================================
+// ✅ ADD ACTIVITY LOG SERVICE HERE
+// ============================================
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ActivityLogService>();
 
 var app = builder.Build();
 

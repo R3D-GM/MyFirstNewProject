@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "User Management";
+    var userRoles = ViewBag.UserRoles as Dictionary<string, string>;
+    var userStatus = ViewBag.UserStatus as Dictionary<string, bool>;
 }
 
 <div class="container-fluid px-0">
@@ -10,7 +12,7 @@
             <h1 class="display-6 fw-bold">
                 <i class="bi bi-people text-primary"></i> User Management
             </h1>
-            <p class="text-muted">Manage all registered users</p>
+            <p class="text-muted">View and manage all registered users</p>
         </div>
         <a asp-action="Index" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left"></i> Back to Admin
@@ -27,17 +29,18 @@
                             <th>Email</th>
                             <th>Full Name</th>
                             <th>Role</th>
-                            <th>Created At</th>
+                            <th>Status</th>
+                            <th class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         @if (Model != null && Model.Any())
                         {
                             var counter = 1;
-                            var userRoles = ViewBag.UserRoles as Dictionary<string, string>;
                             foreach (var user in Model)
                             {
                                 var role = userRoles?.ContainsKey(user.Id) == true ? userRoles[user.Id] : "No Role";
+                                var isActive = userStatus?.ContainsKey(user.Id) == true ? userStatus[user.Id] : true;
                                 <tr>
                                     <td>@counter</td>
                                     <td>@user.Email</td>
@@ -47,7 +50,28 @@
                                             @role
                                         </span>
                                     </td>
-                                    <td>@user.CreatedAt?.ToString("yyyy-MM-dd")</td>
+                                    <td>
+                                        <span class="badge @(isActive ? "bg-success" : "bg-danger")">
+                                            @(isActive ? "✅ Active" : "❌ Inactive")
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        @if (user.Email != "admin@example.com") // Prevent deactivating the main admin
+                                        {
+                                            <form asp-action="ToggleUserStatus" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="userId" value="@user.Id" />
+                                                <button type="submit" class="btn btn-sm @(isActive ? "btn-danger" : "btn-success")">
+                                                    <i class="bi @(isActive ? "bi-x-circle" : "bi-check-circle")"></i>
+                                                    @(isActive ? "Deactivate" : "Activate")
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Protected</span>
+                                        }
+                                    </td>
                                 </tr>
                                 counter++;
                             }
@@ -55,9 +79,10 @@
                         else
                         {
                             <tr>
-                                <td colspan="5" class="text-center py-5">
+                                <td colspan="6" class="text-center py-5">
                                     <i class="bi bi-inbox display-1 d-block text-muted"></i>
                                     <h4 class="text-muted">No users found</h4>
+                                    <p class="text-muted">Users will appear here after registration</p>
                                 </td>
                             </tr>
                         }

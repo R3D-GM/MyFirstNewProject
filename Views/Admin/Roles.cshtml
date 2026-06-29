@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Role Management";
+    var roleCounts = ViewBag.RoleCounts as Dictionary<string, int>;
 }
 
 <div class="container-fluid px-0">
@@ -10,13 +11,32 @@
             <h1 class="display-6 fw-bold">
                 <i class="bi bi-shield-lock text-primary"></i> Role Management
             </h1>
-            <p class="text-muted">Manage user roles</p>
+            <p class="text-muted">Create and manage user roles</p>
         </div>
         <a asp-action="Index" class="btn btn-outline-secondary">
             <i class="bi bi-arrow-left"></i> Back to Admin
         </a>
     </div>
 
+    <!-- Create Role Form -->
+    <div class="card border-0 mb-4">
+        <div class="card-body">
+            <form asp-action="CreateRole" method="post" class="row g-3">
+                @Html.AntiForgeryToken()
+                <div class="col-md-8">
+                    <label class="form-label">New Role Name</label>
+                    <input type="text" name="roleName" class="form-control" placeholder="Enter role name..." required />
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-plus-circle"></i> Create Role
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Role List -->
     <div class="card border-0">
         <div class="card-body p-0">
             <div class="table-responsive">
@@ -25,7 +45,8 @@
                         <tr>
                             <th>#</th>
                             <th>Role Name</th>
-                            <th>Users with this Role</th>
+                            <th>Users</th>
+                            <th class="text-center">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -34,6 +55,7 @@
                             var counter = 1;
                             foreach (var role in Model)
                             {
+                                var count = roleCounts?.ContainsKey(role.Name!) == true ? roleCounts[role.Name!] : 0;
                                 <tr>
                                     <td>@counter</td>
                                     <td>
@@ -41,8 +63,22 @@
                                             @role.Name
                                         </span>
                                     </td>
-                                    <td>
-                                        <span class="text-muted">N/A</span>
+                                    <td>@count users</td>
+                                    <td class="text-center">
+                                        @if (role.Name != "Admin" && role.Name != "Manager" && role.Name != "User")
+                                        {
+                                            <form asp-action="DeleteRole" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="roleId" value="@role.Id" />
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this role?')">
+                                                    <i class="bi bi-trash"></i> Delete
+                                                </button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">Protected</span>
+                                        }
                                     </td>
                                 </tr>
                                 counter++;
@@ -51,7 +87,7 @@
                         else
                         {
                             <tr>
-                                <td colspan="3" class="text-center py-5">
+                                <td colspan="4" class="text-center py-5">
                                     <i class="bi bi-inbox display-1 d-block text-muted"></i>
                                     <h4 class="text-muted">No roles found</h4>
                                 </td>

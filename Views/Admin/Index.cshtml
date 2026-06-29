@@ -1,3 +1,5 @@
+@model MyFirstNewProject.ViewModels.AdminDashboardViewModel
+
 @{
     ViewData["Title"] = "Admin Dashboard";
 }
@@ -17,9 +19,28 @@
         </div>
     </div>
 
-    <div class="row g-4">
-        <!-- User Management -->
-        <div class="col-md-6">
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="card stats-card bg-primary text-white shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title"><i class="bi bi-people"></i> Total Users</h5>
+                    <h2>@Model.TotalUsers</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card stats-card bg-success text-white shadow-sm">
+                <div class="card-body text-center">
+                    <h5 class="card-title"><i class="bi bi-shield-lock"></i> Total Roles</h5>
+                    <h2>@Model.TotalRoles</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Actions -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
             <div class="card border-0">
                 <div class="card-body text-center p-4">
                     <div class="display-1 text-primary">
@@ -33,9 +54,7 @@
                 </div>
             </div>
         </div>
-
-        <!-- Role Management -->
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="card border-0">
                 <div class="card-body text-center p-4">
                     <div class="display-1 text-warning">
@@ -49,5 +68,98 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="card border-0">
+                <div class="card-body text-center p-4">
+                    <div class="display-1 text-info">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <h3>Activity Logs</h3>
+                    <p class="text-muted">View audit trail of all actions</p>
+                    <a asp-action="ActivityLogs" class="btn btn-primary">
+                        <i class="bi bi-arrow-right"></i> View Logs
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Registrations -->
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card border-0">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-clock-history text-primary"></i> Recent Registrations</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Full Name</th>
+                                    <th>Registered</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RecentRegistrations != null && Model.RecentRegistrations.Any())
+                                {
+                                    foreach (var user in Model.RecentRegistrations)
+                                    {
+                                        <tr>
+                                            <td>@user.Email</td>
+                                            <td>@(user.FullName ?? "N/A")</td>
+                                            <td>@user.CreatedAt?.ToString("yyyy-MM-dd HH:mm")</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="3" class="text-center py-3 text-muted">No recent registrations</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+@section Styles {
+    <style>
+        .stats-card {
+            border-radius: 15px;
+            border: none;
+            transition: transform 0.2s;
+        }
+        .stats-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        .card {
+            border-radius: 15px;
+            border: none;
+        }
+        .card-header {
+            border-radius: 15px 15px 0 0;
+        }
+        .bg-primary {
+            background: linear-gradient(135deg, #8EB1D1, #A7C7E7) !important;
+            color: #1C2B48 !important;
+        }
+        .bg-success {
+            background: linear-gradient(135deg, #4A7C5E, #6B9E7A) !important;
+        }
+        .bg-warning {
+            background: linear-gradient(135deg, #C4D8E5, #E8ECEF) !important;
+            color: #1C2B48 !important;
+        }
+        .bg-info {
+            background: linear-gradient(135deg, #A7C7E7, #8EB1D1) !important;
+            color: #1C2B48 !important;
+        }
+    </style>
+}

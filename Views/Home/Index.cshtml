@@ -150,8 +150,8 @@
                                         }
                                     </td>
                                     <td>
-                                        <span class="badge @(item.IsPerson ? "bg-info" : "bg-warning")">
-                                            @(item.IsPerson ? "👤 Person" : "🏢 Company")
+                                    <span class="badge @(item.IsPerson ? "bg-info" : "bg-success")">
+                                        @(item.IsPerson ? "👤 Person" : "🏢 Company")
                                         </span>
                                     </td>
                                     <td>@(item.BusinessType ?? "N/A")</td>
@@ -268,8 +268,8 @@
         <div class="col-md-3">
             <div class="card stats-card border-0">
                 <div class="card-body text-center">
-                    <h6 class="text-muted">Companies</h6>
-                    <h2 class="fw-bold text-warning">@(Model?.Count(c => !c.IsPerson) ?? 0)</h2>
+                                    <h6 class="text-muted">Companies</h6>
+                                    <h2 class="fw-bold text-success" style="color: #8EB69B !important;">@(Model?.Count(c => !c.IsPerson) ?? 0)</h2>
                 </div>
             </div>
         </div>

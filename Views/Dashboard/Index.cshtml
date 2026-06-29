@@ -204,7 +204,7 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
             <h1 class="display-6 fw-bold" style="background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                <i class="bi bi-graph-up-arrow" style="-webkit-text-fill-color: #60a5fa;"></i> Welcome back, Executive
+                <i class="bi bi-graph-up-arrow" style="-webkit-text-fill-color: #60a5fa;"></i> Welcome, Executive
             </h1>
             <p class="text-muted">Real-time customer insights and analytics</p>
         </div>
@@ -281,14 +281,14 @@
                     <div class="d-flex justify-content-between align-items-start">
                         <div>
                             <span class="text-muted text-uppercase small fw-semibold">Companies</span>
-                            <h2 class="display-4 fw-bold text-warning mb-0">@Model.TotalCompanies</h2>
+                            <h2 class="display-4 fw-bold text-success mb-0" style="color: #8EB69B !important;">@Model.TotalCompanies</h2>
                         </div>
-                        <div class="bg-warning bg-opacity-10 p-3 rounded-3">
-                            <i class="bi bi-building fs-2 text-warning"></i>
+                        <div class="bg-success bg-opacity-10 p-3 rounded-3">
+                            <i class="bi bi-building fs-2 text-success"></i>
                         </div>
                     </div>
                     <div class="mt-3">
-                        <span class="badge bg-warning">
+                        <span class="badge bg-success">
                             <i class="bi bi-arrow-right"></i> @(Model.TotalCustomers > 0 ? Math.Round((double)Model.TotalCompanies / Model.TotalCustomers * 100) : 0)% of total
                         </span>
                     </div>
@@ -395,8 +395,8 @@
                                         <div class="list-group-item d-flex justify-content-between align-items-center">
                                             <span>@group.Type</span>
                                             <span>
-                                                <span class="badge bg-primary me-2">@group.Count</span>
-                                                <span class="badge bg-secondary">@percentage%</span>
+                                                <span class="badge me-2" style="background-color: #235347; color: white;">@group.Count</span>
+                                                <span class="badge" style="background-color: #8EB69B; color: #0a0e1a;">@percentage%</span>
                                             </span>
                                         </div>
                                     }
@@ -448,7 +448,7 @@
                                                     ? Math.Round((double)Model.TotalCompanies / Model.TotalCustomers * 100) 
                                                     : 0;
                                             }
-                                            <h4 class="fw-bold text-warning">@companyRatio%</h4>
+                                            <h4 class="fw-bold text-success" style="color: #8EB69B !important;">@companyRatio%</h4>
                                             <small class="text-muted">@Model.TotalCompanies companies</small>
                                         </div>
                                     </div>
@@ -494,7 +494,7 @@
                         </div>
                         <div class="col-md-3">
                             <h6 class="text-muted small">Companies</h6>
-                            <h3 class="fw-bold text-warning">@Model.TotalCompanies</h3>
+                            <h3 class="fw-bold text-success" style="color: #8EB69B !important;">@Model.TotalCompanies</h3>
                         </div>
                         <div class="col-md-3">
                             <h6 class="text-muted small">Persons</h6>
@@ -523,7 +523,7 @@
         });
 
         // ========================================
-        // 1. PIE CHART - Advanced Colors
+        // 1. PIE CHART - Customer Type (Blue & Light Blue)
         // ========================================
         var ctx1 = document.getElementById('customerTypeChart').getContext('2d');
         new Chart(ctx1, {
@@ -533,12 +533,12 @@
                 datasets: [{
                     data: [@Model.TotalCompanies, @Model.TotalPersons],
                     backgroundColor: [
-                        'rgba(251, 191, 36, 0.85)',
-                        'rgba(96, 165, 250, 0.85)'
+                        'rgba(59, 130, 246, 0.85)',      // Blue for Companies
+                        'rgba(147, 197, 253, 0.85)'      // Light Blue for Persons
                     ],
                     borderColor: [
-                        'rgba(251, 191, 36, 1)',
-                        'rgba(96, 165, 250, 1)'
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(147, 197, 253, 1)'
                     ],
                     borderWidth: 3,
                     hoverOffset: 15
@@ -568,7 +568,7 @@
         });
 
         // ========================================
-        // 2. DOUGHNUT CHART - Advanced Colors
+        // 2. DOUGHNUT CHART - Status (Green & Red)
         // ========================================
         var ctx2 = document.getElementById('statusChart').getContext('2d');
         new Chart(ctx2, {
@@ -578,12 +578,12 @@
                 datasets: [{
                     data: [@Model.ActiveCustomers, @Model.InactiveCustomers],
                     backgroundColor: [
-                        'rgba(52, 211, 153, 0.85)',
-                        'rgba(251, 113, 133, 0.85)'
+                        'rgba(34, 197, 94, 0.85)',       // ✅ Green for Active
+                        'rgba(239, 68, 68, 0.85)'        // ✅ Red for Inactive
                     ],
                     borderColor: [
-                        'rgba(52, 211, 153, 1)',
-                        'rgba(251, 113, 133, 1)'
+                        'rgba(34, 197, 94, 1)',
+                        'rgba(239, 68, 68, 1)'
                     ],
                     borderWidth: 3,
                     hoverOffset: 15,
@@ -614,7 +614,7 @@
         });
 
         // ========================================
-        // 3. BAR CHART - Advanced Colors
+        // 3. BAR CHART - Analytics (Dashboard Colors)
         // ========================================
         var ctx3 = document.getElementById('analyticsChart').getContext('2d');
         new Chart(ctx3, {
@@ -631,27 +631,27 @@
                         @Model.TotalPersons
                     ],
                     backgroundColor: [
-                        'rgba(96, 165, 250, 0.8)',
-                        'rgba(52, 211, 153, 0.8)',
-                        'rgba(251, 113, 133, 0.8)',
-                        'rgba(251, 191, 36, 0.8)',
-                        'rgba(34, 211, 238, 0.8)'
+                        'rgba(59, 130, 246, 0.8)',       // Blue for Total
+                        'rgba(34, 197, 94, 0.8)',        // Green for Active
+                        'rgba(239, 68, 68, 0.8)',        // Red for Inactive
+                        'rgba(59, 130, 246, 0.8)',       // Blue for Companies
+                        'rgba(147, 197, 253, 0.8)'       // Light Blue for Persons
                     ],
                     borderColor: [
-                        'rgba(96, 165, 250, 1)',
-                        'rgba(52, 211, 153, 1)',
-                        'rgba(251, 113, 133, 1)',
-                        'rgba(251, 191, 36, 1)',
-                        'rgba(34, 211, 238, 1)'
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(34, 197, 94, 1)',
+                        'rgba(239, 68, 68, 1)',
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(147, 197, 253, 1)'
                     ],
                     borderWidth: 2,
                     borderRadius: 10,
                     hoverBackgroundColor: [
-                        'rgba(96, 165, 250, 1)',
-                        'rgba(52, 211, 153, 1)',
-                        'rgba(251, 113, 133, 1)',
-                        'rgba(251, 191, 36, 1)',
-                        'rgba(34, 211, 238, 1)'
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(34, 197, 94, 1)',
+                        'rgba(239, 68, 68, 1)',
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(147, 197, 253, 1)'
                     ]
                 }]
             },
