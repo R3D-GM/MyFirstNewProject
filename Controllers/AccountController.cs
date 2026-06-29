@@ -90,7 +90,7 @@ public class AccountController : Controller
                 model.Email,
                 model.Password,
                 model.RememberMe,
-                lockoutOnFailure: false);
+                lockoutOnFailure: true);  // ✅ CHANGED to true
 
             if (result.Succeeded)
             {
@@ -100,13 +100,23 @@ public class AccountController : Controller
 
             if (result.IsLockedOut)
             {
-                return View("Lockout");
+                _logger.LogWarning("User account locked out: {Email}", model.Email);
+                return RedirectToAction("Lockout");  // ✅ Redirect to Lockout page
             }
 
             ModelState.AddModelError(string.Empty, "Invalid login attempt.");
         }
 
         return View(model);
+    }
+
+    // ============================================
+    // LOCKOUT - GET
+    // ============================================
+    [HttpGet]
+    public IActionResult Lockout()
+    {
+        return View();
     }
 
     // ============================================

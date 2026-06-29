@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MyFirstNewProject.Data;  // ✅ Make sure this is included
+using MyFirstNewProject.Data;
 using MyFirstNewProject.Models;
 using MyFirstNewProject.Services;
 using MyFirstNewProject.ViewModels;
@@ -17,19 +17,22 @@ public class AdminController : Controller
     private readonly ILogger<AdminController> _logger;
     private readonly ActivityLogService _activityLogService;
     private readonly ApplicationDbContext _context;
+    private readonly NotificationService _notificationService;
 
     public AdminController(
         UserManager<ApplicationUser> userManager,
         RoleManager<IdentityRole> roleManager,
         ILogger<AdminController> logger,
         ActivityLogService activityLogService,
-        ApplicationDbContext context)  // ✅ This should work now
+        ApplicationDbContext context,
+        NotificationService notificationService)
     {
         _userManager = userManager;
         _roleManager = roleManager;
         _logger = logger;
         _activityLogService = activityLogService;
         _context = context;
+        _notificationService = notificationService;
     }
 
     public async Task<IActionResult> Index()
@@ -71,7 +74,8 @@ public class AdminController : Controller
         {
             var roles = await _userManager.GetRolesAsync(user);
             userRoles[user.Id] = roles.FirstOrDefault() ?? "No Role";
-            userStatus[user.Id] = user.LockoutEnd == null || user.LockoutEnd < DateTime.Now;
+            // ✅ FIXED: Check if user is locked
+            userStatus[user.Id] = user.LockoutEnd == null || user.LockoutEnd < DateTimeOffset.UtcNow;
         }
 
         ViewBag.UserRoles = userRoles;
@@ -91,15 +95,28 @@ public class AdminController : Controller
             return NotFound();
         }
 
-        if (user.LockoutEnd == null || user.LockoutEnd < DateTime.Now)
+        // Check if user is currently locked (inactive)
+        bool isLocked = user.LockoutEnd != null && user.LockoutEnd > DateTimeOffset.UtcNow;
+
+        if (!isLocked)
         {
-            user.LockoutEnd = DateTime.MaxValue;
+            // ✅ FIXED: Use AddYears(100) instead of DateTime.MaxValue
+            user.LockoutEnd = DateTimeOffset.UtcNow.AddYears(100);
             await _activityLogService.LogAsync("User Deactivated", $"User {user.Email} was deactivated");
+            
+            // Send notification to the user
+            await _notificationService.AddNotificationAsync(userId, "Account Deactivated", 
+                "Your account has been deactivated by an administrator. Please contact support.", "Warning");
         }
         else
         {
+            // Activate user
             user.LockoutEnd = null;
             await _activityLogService.LogAsync("User Activated", $"User {user.Email} was activated");
+            
+            // Send notification to the user
+            await _notificationService.AddNotificationAsync(userId, "Account Activated", 
+                "Your account has been reactivated. You can now login again.", "Success");
         }
 
         await _userManager.UpdateAsync(user);

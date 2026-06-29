@@ -1,0 +1,130 @@
+@model List<MyFirstNewProject.Models.Notification>
+
+@{
+    ViewData["Title"] = "Notifications";
+}
+
+<div class="container-fluid px-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-6 fw-bold">
+                <i class="bi bi-bell text-primary"></i> Notifications
+            </h1>
+            <p class="text-muted">View all your notifications</p>
+        </div>
+        <div>
+            @if (Model.Any(n => !n.IsRead))
+            {
+                <button class="btn btn-primary" onclick="markAllAsRead()">
+                    <i class="bi bi-check-all"></i> Mark All as Read
+                </button>
+            }
+        </div>
+    </div>
+
+    <div class="card border-0">
+        <div class="card-body p-0">
+            @if (Model != null && Model.Any())
+            {
+                <div class="list-group list-group-flush">
+                    @foreach (var notification in Model)
+                    {
+                        <div class="list-group-item @(notification.IsRead ? "" : "bg-primary bg-opacity-10") border-bottom">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div class="flex-grow-1">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="badge @(notification.Type == "Success" ? "bg-success" : notification.Type == "Warning" ? "bg-warning" : notification.Type == "Error" ? "bg-danger" : "bg-info")">
+                                            @notification.Type
+                                        </span>
+                                        @if (!notification.IsRead)
+                                        {
+                                            <span class="badge bg-primary">New</span>
+                                        }
+                                    </div>
+                                    <h5 class="mt-2 mb-1">@notification.Title</h5>
+                                    <p class="text-muted mb-0">@notification.Message</p>
+                                    <small class="text-muted">@notification.CreatedAt.ToString("yyyy-MM-dd HH:mm")</small>
+                                </div>
+                                <div class="d-flex gap-2">
+                                    @if (!notification.IsRead)
+                                    {
+                                        <button class="btn btn-sm btn-outline-primary" onclick="markAsRead(@notification.Id)">
+                                            <i class="bi bi-check-circle"></i>
+                                        </button>
+                                    }
+                                    <button class="btn btn-sm btn-outline-danger" onclick="deleteNotification(@notification.Id)">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-5">
+                    <i class="bi bi-inbox display-1 d-block text-muted"></i>
+                    <h4 class="text-muted">No notifications</h4>
+                    <p class="text-muted">You're all caught up!</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function markAsRead(id) {
+            fetch('/Notification/MarkAsRead', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                },
+                body: JSON.stringify({ id: id })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+        }
+
+        function markAllAsRead() {
+            fetch('/Notification/MarkAllAsRead', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+        }
+
+        function deleteNotification(id) {
+            if (confirm('Delete this notification?')) {
+                fetch('/Notification/Delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]')?.value || ''
+                    },
+                    body: JSON.stringify({ id: id })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    }
+                });
+            }
+        }
+    </script>
+}

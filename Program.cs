@@ -88,6 +88,11 @@ builder.Services.Configure<GzipCompressionProviderOptions>(options =>
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ActivityLogService>();
 
+// ============================================
+// ✅ ADD NOTIFICATION SERVICE HERE
+// ============================================
+builder.Services.AddScoped<NotificationService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
