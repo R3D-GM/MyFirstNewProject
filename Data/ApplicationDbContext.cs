@@ -14,6 +14,7 @@ public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     // ✅ ADD THESE
     public DbSet<ActivityLog> ActivityLogs { get; set; }
     public DbSet<Notification> Notifications { get; set; }
+    public DbSet<SystemSettings> SystemSettings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

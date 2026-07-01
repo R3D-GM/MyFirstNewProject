@@ -1,0 +1,166 @@
+@model List<MyFirstNewProject.Models.Consignee>
+
+@{
+    ViewData["Title"] = "Print Customer List";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Customer List</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 3px solid #235347;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            color: #235347;
+        }
+        .header p {
+            margin: 5px 0;
+            color: #666;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th {
+            background: #235347;
+            color: white;
+            padding: 10px;
+            text-align: left;
+        }
+        td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 12px;
+            color: #999;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .stats div {
+            text-align: center;
+        }
+        .stats .number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #235347;
+        }
+        .stats .label {
+            font-size: 12px;
+            color: #666;
+        }
+       @@media print {
+    .no-print {
+        display: none !important;
+    }
+    body {
+        padding: 10px;
+    }
+    .header {
+        border-bottom-color: #000;
+    }
+    th {
+        background: #000 !important;
+        color: white !important;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📋 ClientVault</h1>
+        <h2>Customer List Report</h2>
+        <p>Generated: @DateTime.Now.ToString("yyyy-MM-dd HH:mm")</p>
+    </div>
+
+    <div class="stats">
+        <div>
+            <div class="number">@Model.Count</div>
+            <div class="label">Total Customers</div>
+        </div>
+        <div>
+            <div class="number">@Model.Count(c => c.IsActive)</div>
+            <div class="label">Active</div>
+        </div>
+        <div>
+            <div class="number">@Model.Count(c => !c.IsPerson)</div>
+            <div class="label">Companies</div>
+        </div>
+        <div>
+            <div class="number">@Model.Count(c => c.IsPerson)</div>
+            <div class="label">Persons</div>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Business</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Take(100))
+            {
+                <tr>
+                    <td>@item.Id</td>
+                    <td>@item.Code</td>
+                    <td>@item.FirstName @item.SecondName</td>
+                    <td>@(item.IsPerson ? "Person" : "Company")</td>
+                    <td>@(item.BusinessType ?? "N/A")</td>
+                    <td>@(item.IsActive ? "Active" : "Inactive")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    @if (Model.Count > 100)
+    {
+        <p style="text-align: center; margin-top: 10px; color: #999;">
+            * Showing first 100 customers out of @Model.Count
+        </p>
+    }
+
+    <div class="footer">
+        <p>© @DateTime.Now.Year ClientVault - Confidential</p>
+        <p>This report contains proprietary information. Handle with care.</p>
+    </div>
+
+    <div class="no-print" style="text-align: center; margin-top: 20px;">
+        <button onclick="window.print()" style="padding: 10px 30px; background: #235347; color: white; border: none; border-radius: 5px; cursor: pointer;">
+            🖨️ Print / Save as PDF
+        </button>
+        <button onclick="window.close()" style="padding: 10px 30px; background: #666; color: white; border: none; border-radius: 5px; cursor: pointer; margin-left: 10px;">
+            Close
+        </button>
+    </div>
+</body>
+</html>

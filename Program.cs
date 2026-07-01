@@ -83,15 +83,25 @@ builder.Services.Configure<GzipCompressionProviderOptions>(options =>
 });
 
 // ============================================
-// ✅ ADD ACTIVITY LOG SERVICE HERE
+// ✅ ADD ACTIVITY LOG SERVICE
 // ============================================
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ActivityLogService>();
 
 // ============================================
-// ✅ ADD NOTIFICATION SERVICE HERE
+// ✅ ADD NOTIFICATION SERVICE
 // ============================================
 builder.Services.AddScoped<NotificationService>();
+
+// ============================================
+// ✅ ADD VALIDATION SERVICE (Task 6)
+// ============================================
+builder.Services.AddScoped<ValidationService>();
+
+// ============================================
+// ✅ ADD PERFORMANCE SERVICE (Task 7)
+// ============================================
+builder.Services.AddScoped<PerformanceService>();
 
 var app = builder.Build();
 
@@ -101,6 +111,47 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+// ============================================
+// ✅ GLOBAL EXCEPTION HANDLING (Task 6)
+// ============================================
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        var exception = context.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>()?.Error;
+        
+        if (exception != null)
+        {
+            var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+            logger.LogError(exception, "Unhandled exception occurred");
+            
+            context.Response.StatusCode = 500;
+            context.Response.ContentType = "text/html";
+            
+            await context.Response.WriteAsync($@"
+                <html>
+                <head>
+                    <title>Error</title>
+                    <style>
+                        body {{ font-family: Arial; text-align: center; padding: 50px; background: #0a0e1a; color: #fff; }}
+                        h1 {{ color: #ef4444; }}
+                        .error-box {{ background: #1a2332; padding: 30px; border-radius: 12px; max-width: 600px; margin: auto; }}
+                    </style>
+                </head>
+                <body>
+                    <div class='error-box'>
+                        <h1>⚠️ Something went wrong</h1>
+                        <p>We're sorry, but an error occurred while processing your request.</p>
+                        <p style='color: #94a3b8; font-size: 14px;'>Error: {exception.Message}</p>
+                        <a href='/' style='color: #60a5fa; text-decoration: none;'>← Go back to Home</a>
+                    </div>
+                </body>
+                </html>
+            ");
+        }
+    });
+});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

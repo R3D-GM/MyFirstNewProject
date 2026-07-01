@@ -137,7 +137,8 @@
                         @if (Model != null && Model.Any())
                         {
                             var counter = (currentPage - 1) * 10 + 1;
-                            foreach (var item in Model)
+                            var itemsToShow = Model.Take(100).ToList();
+                            foreach (var item in itemsToShow)
                             {
                                 <tr>
                                     <td>@counter</td>
@@ -150,8 +151,8 @@
                                         }
                                     </td>
                                     <td>
-                                    <span class="badge @(item.IsPerson ? "bg-info" : "bg-success")">
-                                        @(item.IsPerson ? "👤 Person" : "🏢 Company")
+                                        <span class="badge @(item.IsPerson ? "bg-info" : "bg-success")">
+                                            @(item.IsPerson ? "👤 Person" : "🏢 Company")
                                         </span>
                                     </td>
                                     <td>@(item.BusinessType ?? "N/A")</td>
@@ -161,13 +162,27 @@
                                         </span>
                                     </td>
                                     <td class="text-center">
-                                        <a href="@Url.Action("Details", new { id = item.Id })" 
-                                           class="btn btn-sm btn-outline-primary">
-                                            <i class="bi bi-eye"></i> View
-                                        </a>
+                                        <div class="btn-group btn-group-sm" role="group">
+                                            <a href="@Url.Action("Details", new { id = item.Id })" 
+                                               class="btn btn-outline-primary" title="View Details">
+                                                <i class="bi bi-eye"></i>
+                                            </a>
+                                            <a href="@Url.Action("Profile", new { id = item.Id })" 
+                                               class="btn btn-outline-info" title="View Profile">
+                                                <i class="bi bi-person-badge"></i>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                                 counter++;
+                            }
+                            if (Model.Count > 100)
+                            {
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted py-2">
+                                        <i class="bi bi-info-circle"></i> Showing first 100 customers. Use search/filters to find more.
+                                    </td>
+                                </tr>
                             }
                         }
                         else
@@ -189,125 +204,116 @@
     <!-- ============================================ -->
     <!-- PAGINATION                                  -->
     <!-- ============================================ -->
-    <!-- ============================================ -->
-<!-- PAGINATION                                  -->
-<!-- ============================================ -->
-@if (totalPages > 1)
-{
-    <div class="mt-4">
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
-                <!-- Previous Button -->
-                <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
-                    <a class="page-link" 
-                       href="@Url.Action("Index", new { 
-                           searchTerm = searchTerm, 
-                           sortBy = sortBy, 
-                           sortDirection = sortDirection,
-                           type = ViewBag.Type,
-                           status = ViewBag.Status,
-                           page = currentPage - 1 
-                       })">
-                        <i class="bi bi-chevron-left"></i> Prev
-                    </a>
-                </li>
+    @if (totalPages > 1)
+    {
+        <div class="mt-4">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item @(currentPage <= 1 ? "disabled" : "")">
+                        <a class="page-link" 
+                           href="@Url.Action("Index", new { 
+                               searchTerm = searchTerm, 
+                               sortBy = sortBy, 
+                               sortDirection = sortDirection,
+                               type = ViewBag.Type,
+                               status = ViewBag.Status,
+                               page = currentPage - 1 
+                           })">
+                            <i class="bi bi-chevron-left"></i> Prev
+                        </a>
+                    </li>
 
-                <!-- Page Numbers (Only show 5 at a time) -->
-                @{
-                    int startPage = Math.Max(1, currentPage - 2);
-                    int endPage = Math.Min(totalPages, currentPage + 2);
-                    
-                    // If near the beginning, show first 5
-                    if (currentPage <= 3)
-                    {
-                        startPage = 1;
-                        endPage = Math.Min(5, totalPages);
-                    }
-                    // If near the end, show last 5
-                    else if (currentPage >= totalPages - 2)
-                    {
-                        startPage = Math.Max(1, totalPages - 4);
-                        endPage = totalPages;
-                    }
-                    
-                    // Show first page if not included
-                    if (startPage > 1)
-                    {
-                        <li class="page-item">
-                            <a class="page-link" 
-                               href="@Url.Action("Index", new { 
-                                   searchTerm = searchTerm, 
-                                   sortBy = sortBy, 
-                                   sortDirection = sortDirection,
-                                   type = ViewBag.Type,
-                                   status = ViewBag.Status,
-                                   page = 1 
-                               })">1</a>
-                        </li>
-                        if (startPage > 2)
+                    @{
+                        int startPage = Math.Max(1, currentPage - 2);
+                        int endPage = Math.Min(totalPages, currentPage + 2);
+                        
+                        if (currentPage <= 3)
                         {
-                            <li class="page-item disabled"><span class="page-link">…</span></li>
+                            startPage = 1;
+                            endPage = Math.Min(5, totalPages);
+                        }
+                        else if (currentPage >= totalPages - 2)
+                        {
+                            startPage = Math.Max(1, totalPages - 4);
+                            endPage = totalPages;
+                        }
+                        
+                        if (startPage > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" 
+                                   href="@Url.Action("Index", new { 
+                                       searchTerm = searchTerm, 
+                                       sortBy = sortBy, 
+                                       sortDirection = sortDirection,
+                                       type = ViewBag.Type,
+                                       status = ViewBag.Status,
+                                       page = 1 
+                                   })">1</a>
+                            </li>
+                            if (startPage > 2)
+                            {
+                                <li class="page-item disabled"><span class="page-link">…</span></li>
+                            }
+                        }
+
+                        @for (int i = startPage; i <= endPage; i++)
+                        {
+                            <li class="page-item @(i == currentPage ? "active" : "")">
+                                <a class="page-link" 
+                                   href="@Url.Action("Index", new { 
+                                       searchTerm = searchTerm, 
+                                       sortBy = sortBy, 
+                                       sortDirection = sortDirection,
+                                       type = ViewBag.Type,
+                                       status = ViewBag.Status,
+                                       page = i 
+                                   })">@i</a>
+                            </li>
+                        }
+
+                        if (endPage < totalPages)
+                        {
+                            if (endPage < totalPages - 1)
+                            {
+                                <li class="page-item disabled"><span class="page-link">…</span></li>
+                            }
+                            <li class="page-item">
+                                <a class="page-link" 
+                                   href="@Url.Action("Index", new { 
+                                       searchTerm = searchTerm, 
+                                       sortBy = sortBy, 
+                                       sortDirection = sortDirection,
+                                       type = ViewBag.Type,
+                                       status = ViewBag.Status,
+                                       page = totalPages 
+                                   })">@totalPages</a>
+                            </li>
                         }
                     }
 
-                    @for (int i = startPage; i <= endPage; i++)
-                    {
-                        <li class="page-item @(i == currentPage ? "active" : "")">
-                            <a class="page-link" 
-                               href="@Url.Action("Index", new { 
-                                   searchTerm = searchTerm, 
-                                   sortBy = sortBy, 
-                                   sortDirection = sortDirection,
-                                   type = ViewBag.Type,
-                                   status = ViewBag.Status,
-                                   page = i 
-                               })">@i</a>
-                        </li>
-                    }
-
-                    // Show last page if not included
-                    if (endPage < totalPages)
-                    {
-                        if (endPage < totalPages - 1)
-                        {
-                            <li class="page-item disabled"><span class="page-link">…</span></li>
-                        }
-                        <li class="page-item">
-                            <a class="page-link" 
-                               href="@Url.Action("Index", new { 
-                                   searchTerm = searchTerm, 
-                                   sortBy = sortBy, 
-                                   sortDirection = sortDirection,
-                                   type = ViewBag.Type,
-                                   status = ViewBag.Status,
-                                   page = totalPages 
-                               })">@totalPages</a>
-                        </li>
-                    }
-                }
-
-                <!-- Next Button -->
-                <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
-                    <a class="page-link" 
-                       href="@Url.Action("Index", new { 
-                           searchTerm = searchTerm, 
-                           sortBy = sortBy, 
-                           sortDirection = sortDirection,
-                           type = ViewBag.Type,
-                           status = ViewBag.Status,
-                           page = currentPage + 1 
-                       })">
-                        Next <i class="bi bi-chevron-right"></i>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-        <div class="text-center text-muted">
-            Showing page @currentPage of @totalPages
-            (@((currentPage - 1) * 10 + 1) - @Math.Min(currentPage * 10, totalRecords) of @totalRecords records)
+                    <li class="page-item @(currentPage >= totalPages ? "disabled" : "")">
+                        <a class="page-link" 
+                           href="@Url.Action("Index", new { 
+                               searchTerm = searchTerm, 
+                               sortBy = sortBy, 
+                               sortDirection = sortDirection,
+                               type = ViewBag.Type,
+                               status = ViewBag.Status,
+                               page = currentPage + 1 
+                           })">
+                            Next <i class="bi bi-chevron-right"></i>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="text-center text-muted">
+                Showing page @currentPage of @totalPages
+                (@((currentPage - 1) * 10 + 1) - @Math.Min(currentPage * 10, totalRecords) of @totalRecords records)
+            </div>
         </div>
-    </div>
-}
+    }
+
     <!-- ============================================ -->
     <!-- STATS CARDS                                 -->
     <!-- ============================================ -->
@@ -331,8 +337,8 @@
         <div class="col-md-3">
             <div class="card stats-card border-0">
                 <div class="card-body text-center">
-                                    <h6 class="text-muted">Companies</h6>
-                                    <h2 class="fw-bold text-success" style="color: #8EB69B !important;">@(Model?.Count(c => !c.IsPerson) ?? 0)</h2>
+                    <h6 class="text-muted">Companies</h6>
+                    <h2 class="fw-bold text-success" style="color: #8EB69B !important;">@(Model?.Count(c => !c.IsPerson) ?? 0)</h2>
                 </div>
             </div>
         </div>

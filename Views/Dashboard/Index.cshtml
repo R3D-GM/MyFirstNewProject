@@ -231,7 +231,9 @@
         <p class="mt-2 text-muted">Loading dashboard data...</p>
     </div>
 
-    <!-- KPI CARDS -->
+    <!-- ============================================ -->
+    <!-- KPI CARDS                                  -->
+    <!-- ============================================ -->
     <div class="row g-4 mb-4">
         <div class="col-xl-3 col-md-6">
             <div class="card stats-card border-0 h-100">
@@ -318,7 +320,129 @@
         </div>
     </div>
 
-    <!-- CHARTS -->
+    <!-- ============================================ -->
+    <!-- ADDITIONAL KPI WIDGETS                      -->
+    <!-- ============================================ -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-3 col-md-6">
+            <div class="card stats-card border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <span class="text-muted text-uppercase small fw-semibold">New This Week</span>
+                            <h2 class="display-4 fw-bold mb-0" style="background: linear-gradient(135deg, #60a5fa, #a78bfa); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                @Model.NewCustomersThisWeek
+                            </h2>
+                        </div>
+                        <div class="bg-primary bg-opacity-10 p-3 rounded-3">
+                            <i class="bi bi-calendar-week fs-2 text-primary"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <span class="badge bg-primary">
+                            <i class="bi bi-arrow-up"></i> New registrations
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card stats-card border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <span class="text-muted text-uppercase small fw-semibold">New This Month</span>
+                            <h2 class="display-4 fw-bold mb-0" style="background: linear-gradient(135deg, #34d399, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                @Model.NewCustomersThisMonth
+                            </h2>
+                        </div>
+                        <div class="bg-success bg-opacity-10 p-3 rounded-3">
+                            <i class="bi bi-calendar-month fs-2 text-success"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <span class="badge bg-success">
+                            <i class="bi bi-arrow-up"></i> This month
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card stats-card border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <span class="text-muted text-uppercase small fw-semibold">Active Rate</span>
+                            <h2 class="display-4 fw-bold mb-0" style="background: linear-gradient(135deg, #34d399, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                @Model.ActiveRate%
+                            </h2>
+                        </div>
+                        <div class="bg-success bg-opacity-10 p-3 rounded-3">
+                            <i class="bi bi-graph-up-arrow fs-2 text-success"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <span class="badge bg-success">
+                            <i class="bi bi-arrow-up"></i> Active customers
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="card stats-card border-0 h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <span class="text-muted text-uppercase small fw-semibold">Company Rate</span>
+                            <h2 class="display-4 fw-bold mb-0" style="background: linear-gradient(135deg, #fbbf24, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                                @Model.CompanyRate%
+                            </h2>
+                        </div>
+                        <div class="bg-warning bg-opacity-10 p-3 rounded-3">
+                            <i class="bi bi-building fs-2 text-warning"></i>
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <span class="badge bg-warning">
+                            <i class="bi bi-arrow-right"></i> Companies
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- QUICK SEARCH                                 -->
+    <!-- ============================================ -->
+    <div class="card border-0 mb-4">
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h5 class="mb-0"><i class="bi bi-search text-primary"></i> Quick Search</h5>
+                    <p class="text-muted small mb-0">Search customers by name or code</p>
+                </div>
+                <div class="col-md-6">
+                    <form asp-controller="Home" asp-action="Index" method="get" class="d-flex">
+                        <input type="text" name="searchTerm" class="form-control me-2" 
+                               placeholder="Search customers..." />
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-search"></i> Go
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- CHARTS                                      -->
+    <!-- ============================================ -->
     <div class="row g-4 mb-4">
         <div class="col-xl-6 col-md-12">
             <div class="card border-0 h-100">
@@ -347,7 +471,9 @@
         </div>
     </div>
 
-    <!-- BAR CHART -->
+    <!-- ============================================ -->
+    <!-- BAR CHART                                   -->
+    <!-- ============================================ -->
     <div class="row g-4 mb-4">
         <div class="col-12">
             <div class="card border-0">
@@ -363,7 +489,58 @@
         </div>
     </div>
 
-    <!-- CUSTOMER ANALYTICS -->
+    <!-- ============================================ -->
+    <!-- DASHBOARD SHORTCUTS                         -->
+    <!-- ============================================ -->
+    <div class="row g-4 mb-4">
+        <div class="col-12">
+            <div class="card border-0">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-grid text-primary"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-3 text-center">
+                        <div class="col-md-3 col-6">
+                            <a asp-controller="Home" asp-action="Index" class="text-decoration-none">
+                                <div class="p-3 rounded-3" style="background: rgba(59, 130, 246, 0.1);">
+                                    <i class="bi bi-people fs-1 text-primary"></i>
+                                    <p class="mt-2 mb-0 text-muted">Customers</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <a asp-controller="Report" asp-action="Index" class="text-decoration-none">
+                                <div class="p-3 rounded-3" style="background: rgba(16, 185, 129, 0.1);">
+                                    <i class="bi bi-file-earmark-text fs-1 text-success"></i>
+                                    <p class="mt-2 mb-0 text-muted">Reports</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <a asp-controller="Analytics" asp-action="Index" class="text-decoration-none">
+                                <div class="p-3 rounded-3" style="background: rgba(139, 92, 246, 0.1);">
+                                    <i class="bi bi-graph-up fs-1 text-purple" style="color: #8b5cf6;"></i>
+                                    <p class="mt-2 mb-0 text-muted">Analytics</p>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <a asp-controller="Admin" asp-action="Users" class="text-decoration-none">
+                                <div class="p-3 rounded-3" style="background: rgba(239, 68, 68, 0.1);">
+                                    <i class="bi bi-gear fs-1 text-danger"></i>
+                                    <p class="mt-2 mb-0 text-muted">Admin</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- CUSTOMER ANALYTICS                          -->
+    <!-- ============================================ -->
     <div class="row g-4 mb-4">
         <div class="col-12">
             <div class="card border-0">
@@ -475,8 +652,49 @@
         </div>
     </div>
 
-    <!-- QUICK STATISTICS -->
+    <!-- ============================================ -->
+    <!-- RECENT ACTIVITY                             -->
+    <!-- ============================================ -->
     <div class="row g-4">
+        <div class="col-12">
+            <div class="card border-0">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-clock-history text-primary"></i> Recent Activity</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div class="list-group list-group-flush">
+                        @if (Model.RecentActivities != null && Model.RecentActivities.Any())
+                        {
+                            foreach (var activity in Model.RecentActivities)
+                            {
+                                <div class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span class="badge @(activity.Severity == "Warning" ? "bg-warning" : activity.Severity == "Error" ? "bg-danger" : "bg-info") me-2">
+                                            @activity.Severity
+                                        </span>
+                                        <span>@activity.Action</span>
+                                        <small class="text-muted ms-2">@activity.Details</small>
+                                    </div>
+                                    <small class="text-muted">@activity.Timestamp.ToString("HH:mm")</small>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="list-group-item text-center text-muted py-3">
+                                No recent activity
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- QUICK STATISTICS                            -->
+    <!-- ============================================ -->
+    <div class="row g-4 mt-3">
         <div class="col-12">
             <div class="card border-0">
                 <div class="card-header">

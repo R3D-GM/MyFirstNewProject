@@ -1,47 +1,63 @@
-# 📋 Customer List Display and Control System
+# 📊 ClientVault - Enterprise Customer Management System
 
-A fully functional ASP.NET Core MVC web application that displays customer data from an external API with search, sort, filter, pagination, and detailed view capabilities.
+## Project Overview
 
-![Build Status](https://img.shields.io/badge/build-passing-brightgreen)
-![.NET Version](https://img.shields.io/badge/.NET-8.0-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
+A comprehensive ASP.NET Core MVC application for managing customer data with authentication, authorization, reporting, analytics, and administrative controls.
 
----
-
-## 🚀 Live Demo
-
-- **Application URL:** `http://localhost:5157` (when running locally)
-- **API Endpoint:** `http://196.191.244.156:7029/api/consignee/dynamic?gsltype=28`
+**Built over 5 Days of Internship**
 
 ---
 
-## 📸 Screenshots
-### Dashboard Page
-![Dashboard](screenshots/dashboard.png)
+## 🚀 Features
 
-### Customer List Page
-![Customer List](screenshots/customer-list.png)
+### 🔐 Authentication & Authorization
+- User Registration and Login
+- 3 User Roles: Admin, Manager, User
+- Role-Based Access Control
+- Account Lockout after 5 failed attempts
+- Secure Password Hashing
+- Session Management (14-day cookie)
 
-### Customer Details Page
-![Customer Details](screenshots/customer-detail.png)
+### 📊 Dashboard
+- Executive Dashboard with 8 KPI Cards
+- Interactive Charts (Pie, Doughnut, Bar)
+- Quick Search
+- Quick Actions Shortcuts
+- Recent Activity Feed
 
----
+### 👥 Customer Management
+- Customer List with Search, Filter, Sort
+- Pagination
+- Customer Details Page
+- Customer Profile Page
+- Print Profile Functionality
 
-## ✨ Features
+### 📄 Reports & Export
+- 3 Report Types: Customer Summary, Activity Log, User Report
+- Export to Excel
+- Export to PDF
+- Print-Friendly Layout
 
-| Feature | Description |
-|---------|-------------|
-| ✅ **Customer List** | Displays all customers in a responsive table |
-| ✅ **Search** | Search by Name or Code with case-insensitive matching |
-| ✅ **Type Filter** | Filter by Person or Company |
-| ✅ **Status Filter** | Filter by Active or Inactive |
-| ✅ **Sorting** | Sort by ID, Name, or Code (Ascending/Descending) |
-| ✅ **Pagination** | Navigate through pages with page numbers |
-| ✅ **Customer Details** | View complete information for any customer |
-| ✅ **Loading Indicator** | Shows spinner during data loading |
-| ✅ **Error Handling** | Friendly error messages for failures |
-| ✅ **Responsive Design** | Works on all screen sizes |
-| ✅ **Custom Theme** | Professional blue/cerulean color scheme |
+### 👑 Administration
+- Admin Dashboard
+- User Management (View, Activate, Deactivate)
+- Role Management (Create, Delete)
+- Activity Logs (Audit Trail)
+- System Settings (Company Profile, Display Options)
+
+### 🛡️ Security Features
+- ASP.NET Core Identity
+- Role-Based Access Control
+- Password Hashing
+- Anti-Forgery Tokens
+- Global Exception Handling
+- API Fallback Data
+
+### ⚡ Performance Optimization
+- Response Caching
+- Data Compression
+- Lazy Loading Charts
+- Global Loading Overlay
 
 ---
 
@@ -49,14 +65,88 @@ A fully functional ASP.NET Core MVC web application that displays customer data 
 
 | Component | Technology |
 |-----------|------------|
-| Backend Framework | ASP.NET Core MVC (.NET 8.0) |
+| Backend | ASP.NET Core MVC (.NET 8.0) |
 | Frontend | Razor Views, HTML5, CSS3 |
 | CSS Framework | Bootstrap 5 |
 | Icons | Bootstrap Icons |
+| Charts | Chart.js |
 | API Client | HttpClient + Newtonsoft.Json |
+| Database | Entity Framework Core (In-Memory) |
+| PDF Generation | iTextSharp |
+| Excel Generation | ClosedXML |
 | Version Control | Git + GitHub |
-| IDE | Visual Studio Code |
 
 ---
 
 ## 📁 Project Structure
+Project1/
+├── Controllers/
+│ ├── AccountController.cs # Login, Register, Logout
+│ ├── AdminController.cs # Admin Dashboard, User/Role Management
+│ ├── AnalyticsController.cs # Customer Analytics
+│ ├── DashboardController.cs # Executive Dashboard
+│ ├── ExportController.cs # Export to Excel/PDF
+│ ├── HomeController.cs # Customer List, Details, Profile
+│ ├── NotificationController.cs # User Notifications
+│ ├── ReportController.cs # Reports Generation
+│ └── SettingsController.cs # System Settings
+├── Models/
+│ ├── ActivityLog.cs # Audit Trail
+│ ├── ApplicationUser.cs # Identity User
+│ ├── Consignee.cs # Customer Model
+│ ├── Notification.cs # User Notifications
+│ └── SystemSettings.cs # App Configuration
+├── Services/
+│ ├── ActivityLogService.cs # Logging Service
+│ ├── ConsigneeService.cs # API Service
+│ ├── NotificationService.cs # Notification Service
+│ ├── PerformanceService.cs # Performance Tracking
+│ └── ValidationService.cs # Data Validation
+├── Views/
+│ ├── Account/
+│ ├── Admin/
+│ ├── Analytics/
+│ ├── Dashboard/
+│ ├── Export/
+│ ├── Home/
+│ ├── Notification/
+│ ├── Report/
+│ └── Settings/
+├── ViewModels/
+├── Data/
+│ ├── ApplicationDbContext.cs
+│ └── SeedData.cs
+├── wwwroot/
+├── Program.cs
+├── appsettings.json
+└── README.md
+
+---
+
+## 🎨 Color Palette
+
+| Color Name | Hex Code | Usage |
+|------------|----------|-------|
+| Dark Background | `#0a0e1a` | Page background |
+| Card Background | `#111827` | Cards |
+| Blue | `#3b82f6` | Primary buttons, charts |
+| Green | `#22c55e` | Active status |
+| Red | `#ef4444` | Inactive status |
+| Sage Green | `#8EB69B` | Companies |
+| Light Blue | `#93c5fd` | Persons |
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+- [.NET 8.0 SDK](https://dotnet.microsoft.com/download)
+- [Git](https://git-scm.com/downloads)
+- Modern web browser
+
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/R3D-GM/MyFirstNewProject.git
+   cd Project1

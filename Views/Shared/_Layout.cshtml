@@ -363,6 +363,16 @@
     @await RenderSectionAsync("Styles", required: false)
 </head>
 <body>
+    <!-- ✅ GLOBAL LOADING OVERLAY -->
+    <div id="globalLoading" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
+        <div class="text-center">
+            <div class="spinner-border text-primary" role="status" style="width: 4rem; height: 4rem;">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mt-2 text-white">Loading...</p>
+        </div>
+    </div>
+
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm">
             <div class="container-fluid">
@@ -394,11 +404,22 @@
                                     <i class="bi bi-graph-up"></i> Analytics
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Report" asp-action="Index">
+                                    <i class="bi bi-file-earmark-text"></i> Reports
+                                </a>
+                            </li>
                             @if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
                                     <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">
                                         <i class="bi bi-shield-lock"></i> Admin
+                                    </a>
+                                </li>
+                                <!-- ✅ SETTINGS LINK -->
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-area="" asp-controller="Settings" asp-action="Index">
+                                        <i class="bi bi-gear"></i> Settings
                                     </a>
                                 </li>
                             }
@@ -415,7 +436,6 @@
                     <ul class="navbar-nav">
                         @if (User?.Identity?.IsAuthenticated == true)
                         {
-                            <!-- ✅ NOTIFICATION BELL - ADDED HERE -->
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="Notification" asp-action="Index" style="position: relative;">
                                     <i class="bi bi-bell fs-5"></i>
@@ -482,6 +502,19 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- ✅ LOADING SCRIPT -->
+    <script>
+        // Show loading on any navigation
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName === 'A' && e.target.href && !e.target.href.includes('#')) {
+                var loadingElement = document.getElementById('globalLoading');
+                if (loadingElement) {
+                    loadingElement.style.display = 'flex';
+                }
+            }
+        });
+    </script>
     
     @await RenderSectionAsync("Scripts", required: false)
 </body>

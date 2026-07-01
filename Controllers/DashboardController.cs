@@ -1,21 +1,27 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using MyFirstNewProject.Data;
 using MyFirstNewProject.Services;
 using MyFirstNewProject.ViewModels;
 
 namespace MyFirstNewProject.Controllers;
 
-[Authorize] 
-
+[Authorize]
 public class DashboardController : Controller
 {
     private readonly ILogger<DashboardController> _logger;
     private readonly ConsigneeService _consigneeService;
+    private readonly ApplicationDbContext _context;
 
-    public DashboardController(ILogger<DashboardController> logger, ConsigneeService consigneeService)
+    public DashboardController(
+        ILogger<DashboardController> logger,
+        ConsigneeService consigneeService,
+        ApplicationDbContext context)  // ✅ ADD THIS
     {
         _logger = logger;
         _consigneeService = consigneeService;
+        _context = context;  // ✅ ADD THIS
     }
 
     public async Task<IActionResult> Index()
@@ -25,6 +31,9 @@ public class DashboardController : Controller
             // Get all customers from API
             var customers = await _consigneeService.GetConsigneesAsync();
             
+            var oneWeekAgo = DateTime.Now.AddDays(-7);
+            var oneMonthAgo = DateTime.Now.AddDays(-30);
+            
             // Calculate metrics
             var viewModel = new DashboardViewModel
             {
@@ -33,7 +42,19 @@ public class DashboardController : Controller
                 InactiveCustomers = customers.Count(c => !c.IsActive),
                 TotalPersons = customers.Count(c => c.IsPerson),
                 TotalCompanies = customers.Count(c => !c.IsPerson),
-                Customers = customers
+                Customers = customers,
+                
+                // Additional KPIs
+                NewCustomersThisWeek = customers.Count(c => c.CreatedOn >= oneWeekAgo),
+                NewCustomersThisMonth = customers.Count(c => c.CreatedOn >= oneMonthAgo),
+                ActiveRate = customers.Count > 0 ? Math.Round((double)customers.Count(c => c.IsActive) / customers.Count * 100) : 0,
+                CompanyRate = customers.Count > 0 ? Math.Round((double)customers.Count(c => !c.IsPerson) / customers.Count * 100) : 0,
+                
+                // Recent Activities
+                RecentActivities = await _context.ActivityLogs
+                    .OrderByDescending(l => l.Timestamp)
+                    .Take(5)
+                    .ToListAsync()
             };
             
             return View(viewModel);

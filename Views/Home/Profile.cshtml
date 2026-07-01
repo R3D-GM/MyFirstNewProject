@@ -1,0 +1,219 @@
+@model MyFirstNewProject.Models.Consignee
+
+@{
+    ViewData["Title"] = "Customer Profile";
+}
+
+<div class="container-fluid px-0">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-6 fw-bold">
+                <i class="bi bi-person-badge text-primary"></i> Customer Profile
+            </h1>
+            <p class="text-muted">Complete customer information</p>
+        </div>
+        <div>
+            <a href="@Url.Action("Index")" class="btn btn-outline-secondary">
+                <i class="bi bi-arrow-left"></i> Back to List
+            </a>
+        </div>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">@ViewBag.Error</div>
+    }
+
+    @if (Model != null)
+    {
+        <!-- Customer Summary Card -->
+        <div class="card border-0 mb-4">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-2 text-center">
+                        <div class="display-1 text-primary">
+                            <i class="bi @(Model.IsPerson ? "bi-person-circle" : "bi-building")"></i>
+                        </div>
+                        <span class="badge @(Model.IsPerson ? "bg-info" : "bg-warning") fs-6">
+                            @(Model.IsPerson ? "👤 Person" : "🏢 Company")
+                        </span>
+                    </div>
+                    <div class="col-md-7">
+                        <h2>@Model.FirstName @Model.SecondName @Model.ThirdName</h2>
+                        <p class="text-muted mb-1"><i class="bi bi-code"></i> Code: @Model.Code</p>
+                        <p class="text-muted mb-0"><i class="bi bi-tag"></i> Business: @(Model.BusinessType ?? "N/A")</p>
+                    </div>
+                    <div class="col-md-3 text-end">
+                        <span class="badge @(Model.IsActive ? "bg-success" : "bg-danger") fs-5 p-3">
+                            @(Model.IsActive ? "✅ Active" : "❌ Inactive")
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Sections -->
+        <div class="row g-4">
+            <!-- Basic Information -->
+            <div class="col-md-6">
+                <div class="card border-0 h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-info-circle text-primary"></i> Basic Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <label class="text-muted small">ID</label>
+                                <p class="fw-bold">@Model.Id</p>
+                            </div>
+                            <div class="col-6">
+                                <label class="text-muted small">Code</label>
+                                <p class="fw-bold">@Model.Code</p>
+                            </div>
+                            <div class="col-12">
+                                <label class="text-muted small">Full Name</label>
+                                <p class="fw-bold">@Model.FirstName @Model.SecondName @Model.ThirdName</p>
+                            </div>
+                            <div class="col-6">
+                                <label class="text-muted small">Type</label>
+                                <p>
+                                    <span class="badge @(Model.IsPerson ? "bg-info" : "bg-warning")">
+                                        @(Model.IsPerson ? "Person" : "Company")
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="col-6">
+                                <label class="text-muted small">Status</label>
+                                <p>
+                                    <span class="badge @(Model.IsActive ? "bg-success" : "bg-danger")">
+                                        @(Model.IsActive ? "Active" : "Inactive")
+                                    </span>
+                                </p>
+                            </div>
+                            <div class="col-12">
+                                <label class="text-muted small">Business Type</label>
+                                <p class="fw-bold">@(Model.BusinessType ?? "N/A")</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="col-md-6">
+                <div class="card border-0 h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-clipboard-data text-primary"></i> Additional Information</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <label class="text-muted small">Gender</label>
+                                <p class="fw-bold">@(Model.Gender ?? "N/A")</p>
+                            </div>
+                            <div class="col-12">
+                                <label class="text-muted small">TIN</label>
+                                <p class="fw-bold">@(Model.Tin ?? "N/A")</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dates -->
+            <div class="col-md-6">
+                <div class="card border-0 h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-calendar text-primary"></i> Important Dates</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <label class="text-muted small">Created On</label>
+                                <p class="fw-bold">@Model.CreatedOn.ToString("yyyy-MM-dd HH:mm")</p>
+                            </div>
+                            <div class="col-12">
+                                <label class="text-muted small">Last Modified</label>
+                                <p class="fw-bold">@Model.LastModified.ToString("yyyy-MM-dd HH:mm")</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats -->
+            <div class="col-md-6">
+                <div class="card border-0 h-100">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-graph-up text-primary"></i> Quick Stats</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-6">
+                                <label class="text-muted small">Is Person</label>
+                                <p class="fw-bold">@(Model.IsPerson ? "Yes" : "No")</p>
+                            </div>
+                            <div class="col-6">
+                                <label class="text-muted small">Is Active</label>
+                                <p class="fw-bold">@(Model.IsActive ? "Yes" : "No")</p>
+                            </div>
+                            <div class="col-12">
+                                <label class="text-muted small">Business Type</label>
+                                <p class="fw-bold">@(Model.BusinessType ?? "N/A")</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="mt-4">
+            <div class="card border-0">
+                <div class="card-body">
+                    <div class="d-flex gap-2 flex-wrap">
+                        <a href="@Url.Action("Index")" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Back to List
+                        </a>
+                        <a href="@Url.Action("Details", new { id = Model.Id })" class="btn btn-primary">
+                            <i class="bi bi-eye"></i> View Details
+                        </a>
+                        <button onclick="window.print()" class="btn btn-outline-primary">
+                            <i class="bi bi-printer"></i> Print Profile
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-warning">Customer not found</div>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .card {
+            border-radius: 12px !important;
+        }
+        .card-header {
+            border-radius: 12px 12px 0 0 !important;
+        }
+        .card-body {
+            padding: 1.5rem;
+        }
+        .badge {
+            padding: 6px 12px;
+        }
+        .badge.fs-5 {
+            font-size: 1.1rem;
+        }
+        label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+    </style>
+}

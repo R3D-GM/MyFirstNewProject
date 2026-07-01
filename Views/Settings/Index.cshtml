@@ -1,0 +1,121 @@
+@model MyFirstNewProject.Models.SystemSettings
+
+@{
+    ViewData["Title"] = "System Settings";
+}
+
+<div class="container-fluid px-0">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-6 fw-bold">
+                <i class="bi bi-gear text-primary"></i> System Settings
+            </h1>
+            <p class="text-muted">Configure application preferences</p>
+        </div>
+        <div>
+            <span class="badge bg-danger rounded-pill fs-6 p-3">
+                <i class="bi bi-shield-lock"></i> Admin Only
+            </span>
+        </div>
+    </div>
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <form asp-action="Update" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="card border-0">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-building"></i> Company Profile</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Company Name</label>
+                        <input asp-for="CompanyName" class="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Company Email</label>
+                        <input asp-for="CompanyEmail" class="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Company Phone</label>
+                        <input asp-for="CompanyPhone" class="form-control" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label">Company Website</label>
+                        <input asp-for="CompanyWebsite" class="form-control" />
+                    </div>
+                    <div class="col-md-12">
+                        <label class="form-label">Company Address</label>
+                        <input asp-for="CompanyAddress" class="form-control" />
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 mt-4">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-sliders"></i> Display Options</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label">Default Theme</label>
+                        <select asp-for="DefaultTheme" class="form-select">
+                            <option value="Dark">Dark</option>
+                            <option value="Light">Light</option>
+                            <option value="System">System Default</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Default Page Size</label>
+                        <select asp-for="DefaultPageSize" class="form-select">
+                            <option value="5">5</option>
+                            <option value="10">10</option>
+                            <option value="25">25</option>
+                            <option value="50">50</option>
+                            <option value="100">100</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-check mt-4">
+                            <input asp-for="EnableNotifications" class="form-check-input" />
+                            <label class="form-check-label">Enable Notifications</label>
+                        </div>
+                        <div class="form-check">
+                            <input asp-for="EnableDarkMode" class="form-check-input" />
+                            <label class="form-check-label">Enable Dark Mode</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 mt-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span class="text-muted">Last updated: @Model.UpdatedAt.ToString("yyyy-MM-dd HH:mm")</span>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save"></i> Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </form>
+</div>

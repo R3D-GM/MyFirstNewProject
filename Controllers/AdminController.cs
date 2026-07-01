@@ -18,6 +18,7 @@ public class AdminController : Controller
     private readonly ActivityLogService _activityLogService;
     private readonly ApplicationDbContext _context;
     private readonly NotificationService _notificationService;
+    private readonly PerformanceService _performanceService; // ✅ ADDED
 
     public AdminController(
         UserManager<ApplicationUser> userManager,
@@ -25,7 +26,8 @@ public class AdminController : Controller
         ILogger<AdminController> logger,
         ActivityLogService activityLogService,
         ApplicationDbContext context,
-        NotificationService notificationService)
+        NotificationService notificationService,
+        PerformanceService performanceService) // ✅ ADDED
     {
         _userManager = userManager;
         _roleManager = roleManager;
@@ -33,6 +35,7 @@ public class AdminController : Controller
         _activityLogService = activityLogService;
         _context = context;
         _notificationService = notificationService;
+        _performanceService = performanceService; // ✅ ADDED
     }
 
     public async Task<IActionResult> Index()
@@ -66,15 +69,21 @@ public class AdminController : Controller
 
     public async Task<IActionResult> Users()
     {
-        var users = _userManager.Users.ToList();
+        // ✅ Optimized: Only select needed fields
+        var users = await _performanceService.MeasureAsync("GetUsers", async () =>
+            await _userManager.Users
+                .Select(u => new { u.Id, u.Email, u.FullName, u.LockoutEnd, u.CreatedAt })
+                .ToListAsync()
+        );
+        
         var userRoles = new Dictionary<string, string>();
         var userStatus = new Dictionary<string, bool>();
 
         foreach (var user in users)
         {
-            var roles = await _userManager.GetRolesAsync(user);
+            var appUser = await _userManager.FindByIdAsync(user.Id);
+            var roles = await _userManager.GetRolesAsync(appUser);
             userRoles[user.Id] = roles.FirstOrDefault() ?? "No Role";
-            // ✅ FIXED: Check if user is locked
             userStatus[user.Id] = user.LockoutEnd == null || user.LockoutEnd < DateTimeOffset.UtcNow;
         }
 
@@ -95,26 +104,19 @@ public class AdminController : Controller
             return NotFound();
         }
 
-        // Check if user is currently locked (inactive)
         bool isLocked = user.LockoutEnd != null && user.LockoutEnd > DateTimeOffset.UtcNow;
 
         if (!isLocked)
         {
-            // ✅ FIXED: Use AddYears(100) instead of DateTime.MaxValue
             user.LockoutEnd = DateTimeOffset.UtcNow.AddYears(100);
             await _activityLogService.LogAsync("User Deactivated", $"User {user.Email} was deactivated");
-            
-            // Send notification to the user
             await _notificationService.AddNotificationAsync(userId, "Account Deactivated", 
                 "Your account has been deactivated by an administrator. Please contact support.", "Warning");
         }
         else
         {
-            // Activate user
             user.LockoutEnd = null;
             await _activityLogService.LogAsync("User Activated", $"User {user.Email} was activated");
-            
-            // Send notification to the user
             await _notificationService.AddNotificationAsync(userId, "Account Activated", 
                 "Your account has been reactivated. You can now login again.", "Success");
         }

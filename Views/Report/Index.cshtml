@@ -1,0 +1,277 @@
+@model MyFirstNewProject.ViewModels.ReportViewModel
+
+@{
+    ViewData["Title"] = "Reports";
+}
+
+<div class="container-fluid px-0">
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="display-6 fw-bold">
+                <i class="bi bi-file-earmark-text text-primary"></i> Reports
+            </h1>
+            <p class="text-muted">Generate and view system reports</p>
+        </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- ✅ EXPORT BUTTONS - ADDED HERE               -->
+    <!-- ============================================ -->
+    <div class="mb-4">
+        <div class="d-flex gap-2 flex-wrap">
+            <a asp-controller="Export" asp-action="CustomersToExcel" class="btn btn-success">
+                <i class="bi bi-file-earmark-excel"></i> Export to Excel
+            </a>
+            <a asp-controller="Export" asp-action="CustomersToPdf" class="btn btn-danger">
+                <i class="bi bi-file-earmark-pdf"></i> Export to PDF
+            </a>
+            <a asp-controller="Export" asp-action="PrintCustomers" target="_blank" class="btn btn-primary">
+                <i class="bi bi-printer"></i> Print View
+            </a>
+        </div>
+    </div>
+
+    <!-- Report Filters -->
+    <div class="card border-0 mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label"><i class="bi bi-file-earmark"></i> Report Type</label>
+                    <select name="reportType" class="form-select" onchange="this.form.submit()">
+                        <option value="Customer" selected="@(Model.ReportType == "Customer")">Customer Summary</option>
+                        <option value="Activity" selected="@(Model.ReportType == "Activity")">Activity Log</option>
+                        <option value="User" selected="@(Model.ReportType == "User")">User Report</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label"><i class="bi bi-calendar"></i> Start Date</label>
+                    <input type="date" name="startDate" class="form-control" value="@Model.StartDate" />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label"><i class="bi bi-calendar"></i> End Date</label>
+                    <input type="date" name="endDate" class="form-control" value="@Model.EndDate" />
+                </div>
+                <div class="col-md-2">
+                    <label class="form-label"><i class="bi bi-tag"></i> Category</label>
+                    <input type="text" name="category" class="form-control" placeholder="All" value="@Model.Category" />
+                </div>
+                <div class="col-md-1 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    @if (ViewBag.Error != null)
+    {
+        <div class="alert alert-danger">@ViewBag.Error</div>
+    }
+
+    <!-- ============================================ -->
+    <!-- CUSTOMER REPORT                             -->
+    <!-- ============================================ -->
+    @if (Model.ReportType == "Customer")
+    {
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="card stats-card border-0">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted">Total Customers</h6>
+                        <h2 class="fw-bold text-primary">@Model.TotalCustomers</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card border-0">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted">Active</h6>
+                        <h2 class="fw-bold text-success">@Model.ActiveCustomers</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card border-0">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted">Companies</h6>
+                        <h2 class="fw-bold text-warning">@Model.TotalCompanies</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card border-0">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted">Persons</h6>
+                        <h2 class="fw-bold text-info">@Model.TotalPersons</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-table"></i> Customer Summary</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Name</th>
+                                <th>Type</th>
+                                <th>Business</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.CustomerData != null && Model.CustomerData.Any())
+                            {
+                                var displayData = Model.CustomerData.Take(50).ToList();
+                                foreach (var item in displayData)
+                                {
+                                    <tr>
+                                        <td><span class="badge bg-secondary">@item.Code</span></td>
+                                        <td>@item.FirstName @item.SecondName</td>
+                                        <td>
+                                            <span class="badge @(item.IsPerson ? "bg-info" : "bg-warning")">
+                                                @(item.IsPerson ? "Person" : "Company")
+                                            </span>
+                                        </td>
+                                        <td>@(item.BusinessType ?? "N/A")</td>
+                                        <td>
+                                            <span class="badge @(item.IsActive ? "bg-success" : "bg-danger")">
+                                                @(item.IsActive ? "Active" : "Inactive")
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="5" class="text-center py-3">No customer data available</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- ============================================ -->
+    <!-- ACTIVITY REPORT                             -->
+    <!-- ============================================ -->
+    @if (Model.ReportType == "Activity")
+    {
+        <div class="row g-4 mb-4">
+            <div class="col-md-12">
+                <div class="card stats-card border-0">
+                    <div class="card-body text-center">
+                        <h6 class="text-muted">Total Activities</h6>
+                        <h2 class="fw-bold text-primary">@Model.TotalActivities</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Activity Log</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>User</th>
+                                <th>Action</th>
+                                <th>Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.ActivityLogs != null && Model.ActivityLogs.Any())
+                            {
+                                foreach (var log in Model.ActivityLogs.Take(50))
+                                {
+                                    <tr>
+                                        <td>@log.Timestamp.ToString("yyyy-MM-dd HH:mm")</td>
+                                        <td>@log.UserEmail</td>
+                                        <td>@log.Action</td>
+                                        <td>@log.Details</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="4" class="text-center py-3">No activity logs available</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- ============================================ -->
+    <!-- USER REPORT                                 -->
+    <!-- ============================================ -->
+    @if (Model.ReportType == "User")
+    {
+        <div class="card border-0">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-people"></i> User Report</h5>
+            </div>
+            <div class="card-body p-0">
+                <div class="table-responsive">
+                    <table class="table table-hover mb-0">
+                        <thead>
+                            <tr>
+                                <th>Email</th>
+                                <th>Full Name</th>
+                                <th>Role</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.Users != null && Model.Users.Any())
+                            {
+                                foreach (var user in Model.Users)
+                                {
+                                    <tr>
+                                        <td>@user.Email</td>
+                                        <td>@(user.FullName ?? "N/A")</td>
+                                        <td><span class="badge bg-secondary">User</span></td>
+                                        <td>@user.CreatedAt?.ToString("yyyy-MM-dd")</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr><td colspan="4" class="text-center py-3">No users available</td></tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .stats-card {
+            background: var(--bg-card) !important;
+            border: 1px solid var(--border-color) !important;
+            border-radius: 12px !important;
+            transition: all 0.3s ease;
+        }
+        .stats-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--color-sage);
+            box-shadow: 0 8px 30px var(--shadow-color);
+        }
+    </style>
+}

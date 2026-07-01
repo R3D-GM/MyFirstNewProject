@@ -5,17 +5,25 @@ using MyFirstNewProject.Models;
 using System.Diagnostics;
 
 namespace MyFirstNewProject.Controllers;
-[Authorize]
 
+[Authorize]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
     private readonly ConsigneeService _consigneeService;
+    private readonly PerformanceService _performanceService;  // ✅ ADDED
+    private readonly ValidationService _validationService;    // ✅ ADDED
 
-    public HomeController(ILogger<HomeController> logger, ConsigneeService consigneeService)
+    public HomeController(
+        ILogger<HomeController> logger,
+        ConsigneeService consigneeService,
+        PerformanceService performanceService,   // ✅ ADDED
+        ValidationService validationService)     // ✅ ADDED
     {
         _logger = logger;
         _consigneeService = consigneeService;
+        _performanceService = performanceService;   // ✅ ADDED
+        _validationService = validationService;     // ✅ ADDED
     }
 
     [ResponseCache(Duration = 60, VaryByQueryKeys = new[] { "searchTerm", "sortBy", "sortDirection", "type", "status", "page", "pageSize" })]
@@ -30,8 +38,10 @@ public class HomeController : Controller
     {
         try
         {
-            // Get all data
-            var allData = await _consigneeService.GetConsigneesAsync();
+            // ✅ Measure performance of API call
+            var allData = await _performanceService.MeasureAsync("GetConsignees", async () =>
+                await _consigneeService.GetConsigneesAsync()
+            );
 
             // -------------------------
             // SEARCH
@@ -144,7 +154,7 @@ public class HomeController : Controller
     }
 
     // ============================================================
-    // ✅ ADD THIS DETAILS METHOD (place it here)
+    // DETAILS METHOD
     // ============================================================
     public async Task<IActionResult> Details(int id)
     {
@@ -165,6 +175,32 @@ public class HomeController : Controller
         {
             _logger.LogError(ex, $"Error fetching details for ID: {id}");
             ViewBag.Error = "Unable to load customer details.";
+            return View();
+        }
+    }
+
+    // ============================================================
+    // PROFILE METHOD
+    // ============================================================
+    public async Task<IActionResult> Profile(int id)
+    {
+        try
+        {
+            var customers = await _consigneeService.GetConsigneesAsync();
+            var customer = customers.FirstOrDefault(c => c.Id == id);
+            
+            if (customer == null)
+            {
+                ViewBag.Error = "Customer not found.";
+                return View();
+            }
+            
+            return View(customer);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, $"Error fetching profile for ID: {id}");
+            ViewBag.Error = "Unable to load customer profile.";
             return View();
         }
     }
